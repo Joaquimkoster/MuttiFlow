@@ -31,7 +31,10 @@ MuttiFlow é uma aplicação exemplo que demonstra uma arquitetura com backend R
 ```bash
 cd backend
 npm install
-# configurar variáveis de ambiente (ex: DATABASE_URL ou PGHOST/PGUSER/PGPASSWORD/PGDATABASE/PGPORT)
+# criar a configuração local a partir do exemplo
+cp .env.example .env
+# criar a tabela de usuários (com o banco muttiflow já criado)
+psql -U postgres -d muttiflow -f database/init.sql
 npm run dev
 ```
 
@@ -53,6 +56,14 @@ O Vite roda normalmente em http://localhost:5173 — abra no navegador.
 - `PORT` — porta em que o backend irá escutar (padrão 3000 se não definido)
 
 Crie um arquivo `.env` em `backend/` com as variáveis necessárias antes de rodar em desenvolvimento.
+
+Para o frontend, opcionalmente copie `frontend/.env.example` para `frontend/.env` se a API não estiver em `http://localhost:3000`.
+
+## Autenticação
+
+- `POST /auth/cadastro` cria a conta, valida os campos e não permite e-mails duplicados.
+- `POST /auth/login` valida as credenciais e devolve um token JWT válido por 8 horas.
+- O frontend salva a sessão no navegador e bloqueia o acesso direto a `/dashboard` sem login.
 
 ## Scripts úteis
 

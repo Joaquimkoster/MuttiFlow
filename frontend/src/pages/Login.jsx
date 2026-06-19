@@ -1,20 +1,36 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../services/api";
 
 export default function Login() {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [erro, setErro] = useState("");
+  const [carregando, setCarregando] = useState(false);
 
-  const handleLogin = () => {
+  const handleLogin = async (event) => {
+    event.preventDefault();
+
     if (!email || !senha) {
-      alert("Preencha todos os campos!");
+      setErro("Preencha e-mail e senha.");
       return;
     }
 
-    console.log("Email:", email);
-    console.log("Senha:", senha);
+    try {
+      setErro("");
+      setCarregando(true);
+
+      const { data } = await api.post("/auth/login", { email, senha });
+      localStorage.setItem("muttiflow_token", data.token);
+      localStorage.setItem("muttiflow_usuario", JSON.stringify(data.usuario));
+      navigate("/dashboard");
+    } catch (error) {
+      setErro(error.response?.data?.erro || "Não foi possível entrar. Tente novamente.");
+    } finally {
+      setCarregando(false);
+    }
   };
 
   const handleCadastro = () => {
@@ -33,7 +49,6 @@ export default function Login() {
         height: "100vh",
       }}
     >
-      {/* Lado esquerdo */}
       <div
         style={{
           flex: 1,
@@ -54,20 +69,8 @@ export default function Login() {
         >
           MuttiFlow
         </h1>
-
-        <p
-          style={{
-            fontSize: "1.3rem",
-            maxWidth: "500px",
-            lineHeight: "1.6",
-          }}
-        >
-          Sistema de gestão de pedidos via WhatsApp, controle de estoque,
-          clientes e entregas em tempo real.
-        </p>
       </div>
 
-      {/* Lado direito */}
       <div
         style={{
           flex: 1,
@@ -77,7 +80,8 @@ export default function Login() {
           alignItems: "center",
         }}
       >
-        <div
+        <form
+          onSubmit={handleLogin}
           style={{
             width: "400px",
           }}
@@ -96,6 +100,8 @@ export default function Login() {
             placeholder="Digite seu email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            autoComplete="email"
+            required
             style={{
               width: "100%",
               padding: "15px",
@@ -111,6 +117,8 @@ export default function Login() {
             placeholder="Digite sua senha"
             value={senha}
             onChange={(e) => setSenha(e.target.value)}
+            autoComplete="current-password"
+            required
             style={{
               width: "100%",
               padding: "15px",
@@ -122,7 +130,8 @@ export default function Login() {
           />
 
           <button
-            onClick={handleLogin}
+            type="submit"
+            disabled={carregando}
             style={{
               width: "100%",
               padding: "15px",
@@ -135,8 +144,14 @@ export default function Login() {
               fontWeight: "bold",
             }}
           >
-            Entrar
+            {carregando ? "Entrando..." : "Entrar"}
           </button>
+
+          {erro && (
+            <p role="alert" style={{ color: "#b91c1c", marginTop: "14px", fontSize: "14px" }}>
+              {erro}
+            </p>
+          )}
 
           <div
             style={{
@@ -167,7 +182,7 @@ export default function Login() {
               Criar conta
             </span>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );
