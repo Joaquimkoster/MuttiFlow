@@ -7,6 +7,12 @@ export default function Dashboard() {
     navigate("/");
   };
 
+  const irDashboard = () => navigate("/dashboard");
+  const irPedidos = () => navigate("/pedidos");
+  const irClientes = () => navigate("/clientes");
+  const irEstoque = () => navigate("/estoque");
+  const irEntregas = () => navigate("/entregas");
+
   return (
     <div
       style={{
@@ -35,11 +41,25 @@ export default function Dashboard() {
           MuttiFlow
         </h2>
 
-        <button style={menuStyle}>📊 Dashboard</button>
-        <button style={menuStyle}>📦 Pedidos</button>
-        <button style={menuStyle}>👥 Clientes</button>
-        <button style={menuStyle}>📦 Estoque</button>
-        <button style={menuStyle}>🚚 Entregas</button>
+        <button onClick={irDashboard} style={menuStyle}>
+          📊 Dashboard
+        </button>
+
+        <button onClick={irPedidos} style={menuStyle}>
+          📦 Pedidos
+        </button>
+
+        <button onClick={irClientes} style={menuStyle}>
+          👥 Clientes
+        </button>
+
+        <button onClick={irEstoque} style={menuStyle}>
+          📦 Estoque
+        </button>
+
+        <button onClick={irEntregas} style={menuStyle}>
+          🚚 Entregas
+        </button>
 
         <div style={{ flex: 1 }} />
 
@@ -50,7 +70,7 @@ export default function Dashboard() {
             backgroundColor: "#dc2626",
           }}
         >
-          Sair
+          🚪 Sair
         </button>
       </div>
 
@@ -70,7 +90,6 @@ export default function Dashboard() {
           Dashboard
         </h1>
 
-        {/* Cards */}
         <div
           style={{
             display: "flex",
@@ -100,7 +119,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Tabela de pedidos */}
         <div
           style={{
             backgroundColor: "white",
@@ -165,6 +183,7 @@ const menuStyle = {
   borderRadius: "8px",
   cursor: "pointer",
   textAlign: "left",
+  width: "100%",
 };
 
 const cardStyle = {
