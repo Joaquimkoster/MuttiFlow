@@ -9,9 +9,9 @@ export default function Dashboard() {
 
   const irDashboard = () => navigate("/dashboard");
   const irPedidos = () => navigate("/pedidos");
-  const irClientes = () => navigate("/clientes");
+  const irEventos = () => navigate("/eventos");
   const irEstoque = () => navigate("/estoque");
-  const irEntregas = () => navigate("/entregas");
+  const irPlanilha = () => navigate("/planilha");
 
   return (
     <div
@@ -42,23 +42,23 @@ export default function Dashboard() {
         </h2>
 
         <button onClick={irDashboard} style={menuStyle}>
-          📊 Dashboard
+          Dashboard
         </button>
 
         <button onClick={irPedidos} style={menuStyle}>
-          📦 Pedidos
+          Pedidos
         </button>
 
-        <button onClick={irClientes} style={menuStyle}>
-          👥 Clientes
+        <button onClick={irEventos} style={menuStyle}>
+          Eventos
         </button>
 
         <button onClick={irEstoque} style={menuStyle}>
-          📦 Estoque
+          Estoque
         </button>
 
-        <button onClick={irEntregas} style={menuStyle}>
-          🚚 Entregas
+        <button onClick={irPlanilha} style={menuStyle}>
+          Planilha
         </button>
 
         <div style={{ flex: 1 }} />
@@ -70,7 +70,7 @@ export default function Dashboard() {
             backgroundColor: "#dc2626",
           }}
         >
-          🚪 Sair
+          Sair
         </button>
       </div>
 
@@ -114,7 +114,7 @@ export default function Dashboard() {
           </div>
 
           <div style={cardStyle}>
-            <h3>Entregas Hoje</h3>
+            <h3>Planilhas Hoje</h3>
             <h1>7</h1>
           </div>
         </div>

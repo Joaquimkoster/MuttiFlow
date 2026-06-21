@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-export default function Entregas() {
+export default function Planilha() {
   const navigate = useNavigate();
 
   return (
@@ -9,23 +9,23 @@ export default function Entregas() {
         <h2 style={logoStyle}>MuttiFlow</h2>
 
         <button onClick={() => navigate("/dashboard")} style={menuStyle}>
-          📊 Dashboard
+          Dashboard
         </button>
 
         <button onClick={() => navigate("/pedidos")} style={menuStyle}>
-          📦 Pedidos
+          Pedidos
         </button>
 
-        <button onClick={() => navigate("/clientes")} style={menuStyle}>
-          👥 Clientes
+        <button onClick={() => navigate("/eventos")} style={menuStyle}>
+          Eventos
         </button>
 
         <button onClick={() => navigate("/estoque")} style={menuStyle}>
-          📦 Estoque
+          Estoque
         </button>
 
         <button style={menuStyle}>
-          🚚 Entregas
+          Planilha
         </button>
 
         <div style={{ flex: 1 }} />
@@ -34,15 +34,15 @@ export default function Entregas() {
           onClick={() => navigate("/")}
           style={{ ...menuStyle, backgroundColor: "#dc2626" }}
         >
-          🚪 Sair
+          Sair
         </button>
       </div>
 
       <div style={contentStyle}>
-        <h1>🚚 Entregas</h1>
+        <h1>Planilha</h1>
 
         <div style={cardStyle}>
-          <h3>Próximas Entregas</h3>
+          <h3>Próximas Planilhas</h3>
 
           <ul>
             <li>Maria - 20/06/2026</li>

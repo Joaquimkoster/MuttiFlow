@@ -1,61 +1,80 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function Pedidos() {
+export default function Eventos() {
   const navigate = useNavigate();
 
   const [pesquisa, setPesquisa] = useState("");
 
-  const pedidos = [
+  const eventos = [
     {
       id: 1,
-      cliente: "Maria",
-      endereco: "Rua das Flores, 123",
-      produto: "Bolo de Chocolate",
-      preco: 120.0,
-      entrega: "20/06/2026",
-      status: "Preparando",
+      nome: "Casamento Silva",
+      cliente: "Maria Silva",
+      tipo: "Casamento",
+      data: "20/07/2026",
+      horario: "18:00",
+      endereco: "Rua das Flores, 120",
+      convidados: 150,
+      valor: "R$ 4.500,00",
+      status: "Confirmado",
     },
     {
       id: 2,
-      cliente: "João",
-      endereco: "Av. Brasil, 450",
-      produto: "Torta de Limão",
-      preco: 75.5,
-      entrega: "21/06/2026",
-      status: "Entregue",
+      nome: "Aniversário João",
+      cliente: "João Santos",
+      tipo: "Aniversário",
+      data: "25/07/2026",
+      horario: "14:00",
+      endereco: "Av. Central, 500",
+      convidados: 60,
+      valor: "R$ 1.200,00",
+      status: "Preparando",
     },
     {
       id: 3,
-      cliente: "Ana",
-      endereco: "Rua São José, 78",
-      produto: "Cupcakes",
-      preco: 60.0,
-      entrega: "22/06/2026",
+      nome: "Evento Corporativo",
+      cliente: "Empresa XPTO",
+      tipo: "Corporativo",
+      data: "30/07/2026",
+      horario: "09:00",
+      endereco: "Centro de Convenções",
+      convidados: 300,
+      valor: "R$ 8.000,00",
       status: "Agendado",
     },
   ];
 
+  const eventosFiltrados = eventos.filter((evento) =>
+    evento.cliente.toLowerCase().includes(pesquisa.toLowerCase()),
+  );
+
   return (
     <div style={containerStyle}>
-      {}{" "}
+      {/* Sidebar */}
       <div style={sidebarStyle}>
-        {" "}
         <h2 style={logoStyle}>MuttiFlow</h2>
+
         <button onClick={() => navigate("/dashboard")} style={menuStyle}>
           Dashboard
         </button>
-        <button style={menuStyle}>Pedidos</button>
-        <button onClick={() => navigate("/eventos")} style={menuStyle}>
-          Eventos
+
+        <button onClick={() => navigate("/pedidos")} style={menuStyle}>
+          Pedidos
         </button>
+
+        <button style={menuStyle}>Eventos</button>
+
         <button onClick={() => navigate("/estoque")} style={menuStyle}>
           Estoque
         </button>
+
         <button onClick={() => navigate("/planilha")} style={menuStyle}>
           Planilha
         </button>
+
         <div style={{ flex: 1 }} />
+
         <button
           onClick={() => navigate("/")}
           style={{
@@ -66,12 +85,13 @@ export default function Pedidos() {
           Sair
         </button>
       </div>
+
       {/* Conteúdo */}
       <div style={contentStyle}>
         <div style={topBarStyle}>
-          <h1>Pedidos</h1>
+          <h1>Eventos</h1>
 
-          <button style={novoPedidoStyle}>+ Novo Pedido</button>
+          <button style={novoEventoStyle}>+ Novo Evento</button>
         </div>
 
         <div style={filtrosStyle}>
@@ -87,8 +107,8 @@ export default function Pedidos() {
             <option>Todos</option>
             <option>Agendado</option>
             <option>Preparando</option>
-            <option>Pronto</option>
-            <option>Entregue</option>
+            <option>Confirmado</option>
+            <option>Finalizado</option>
           </select>
         </div>
 
@@ -96,32 +116,43 @@ export default function Pedidos() {
           <table style={tableStyle}>
             <thead>
               <tr>
+                <th style={tableHeader}>Evento</th>
                 <th style={tableHeader}>Cliente</th>
+                <th style={tableHeader}>Tipo</th>
+                <th style={tableHeader}>Data</th>
+                <th style={tableHeader}>Hora</th>
                 <th style={tableHeader}>Endereço</th>
-                <th style={tableHeader}>Produto</th>
-                <th style={tableHeader}>Preço</th>
-                <th style={tableHeader}>Entrega</th>
+                <th style={tableHeader}>Convidados</th>
+                <th style={tableHeader}>Valor</th>
                 <th style={tableHeader}>Status</th>
                 <th style={tableHeader}>Ações</th>
               </tr>
             </thead>
 
             <tbody>
-              {pedidos.map((pedido) => (
-                <tr key={pedido.id}>
-                  <td style={tableCell}>{pedido.cliente}</td>
-                  <td style={tableCell}>{pedido.endereco}</td>
-                  <td style={tableCell}>{pedido.produto}</td>
-
-                  <td style={tableCell}>R$ {pedido.preco.toFixed(2)}</td>
-
-                  <td style={tableCell}>{pedido.entrega}</td>
-                  <td style={tableCell}>{pedido.status}</td>
+              {eventosFiltrados.map((evento) => (
+                <tr key={evento.id}>
+                  <td style={tableCell}>{evento.nome}</td>
+                  <td style={tableCell}>{evento.cliente}</td>
+                  <td style={tableCell}>{evento.tipo}</td>
+                  <td style={tableCell}>{evento.data}</td>
+                  <td style={tableCell}>{evento.horario}</td>
+                  <td style={tableCell}>{evento.endereco}</td>
+                  <td style={tableCell}>{evento.convidados}</td>
+                  <td style={tableCell}>{evento.valor}</td>
+                  <td style={tableCell}>{evento.status}</td>
 
                   <td style={tableCell}>
-                    <button style={editarBtn}>Editar</button>
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: "10px",
+                      }}
+                    >
+                      <button style={editarBtn}>Editar</button>
 
-                    <button style={excluirBtn}>Excluir</button>
+                      <button style={excluirBtn}>Excluir</button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -177,7 +208,7 @@ const topBarStyle = {
   marginBottom: "20px",
 };
 
-const novoPedidoStyle = {
+const novoEventoStyle = {
   backgroundColor: "#2563eb",
   color: "white",
   border: "none",

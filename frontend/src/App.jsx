@@ -4,9 +4,9 @@ import Login from "./pages/Login";
 import Cadastro from "./pages/Cadastro";
 import Dashboard from "./pages/Dashboard";
 import Pedidos from "./pages/Pedidos";
-import Clientes from "./pages/Clientes";
+import Eventos from "./pages/Eventos";
 import Estoque from "./pages/Estoque";
-import Entregas from "./pages/Entregas";
+import Planilha from "./pages/Planilha";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -19,9 +19,9 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/pedidos" element={<Pedidos />} />
-          <Route path="/clientes" element={<Clientes />} />
+          <Route path="/eventos" element={<Eventos />} />
           <Route path="/estoque" element={<Estoque />} />
-          <Route path="/entregas" element={<Entregas />} />
+          <Route path="/planilha" element={<Planilha />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

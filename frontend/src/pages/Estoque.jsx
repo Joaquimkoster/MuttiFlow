@@ -9,23 +9,23 @@ export default function Estoque() {
         <h2 style={logoStyle}>MuttiFlow</h2>
 
         <button onClick={() => navigate("/dashboard")} style={menuStyle}>
-          📊 Dashboard
+          Dashboard
         </button>
 
         <button onClick={() => navigate("/pedidos")} style={menuStyle}>
-          📦 Pedidos
+          Pedidos
         </button>
 
-        <button onClick={() => navigate("/clientes")} style={menuStyle}>
-          👥 Clientes
+        <button onClick={() => navigate("/eventos")} style={menuStyle}>
+          Eventos
         </button>
 
         <button style={menuStyle}>
-          📦 Estoque
+          Estoque
         </button>
 
-        <button onClick={() => navigate("/entregas")} style={menuStyle}>
-          🚚 Entregas
+        <button onClick={() => navigate("/planilha")} style={menuStyle}>
+          Planilha
         </button>
 
         <div style={{ flex: 1 }} />
@@ -34,12 +34,12 @@ export default function Estoque() {
           onClick={() => navigate("/")}
           style={{ ...menuStyle, backgroundColor: "#dc2626" }}
         >
-          🚪 Sair
+          Sair
         </button>
       </div>
 
       <div style={contentStyle}>
-        <h1>📦 Estoque</h1>
+        <h1>Estoque</h1>
 
         <div style={cardStyle}>
           <h3>Produtos</h3>
