@@ -48,56 +48,6 @@ export default function Pedidos() {
       </div>
     </div>
   );
-}import { useNavigate } from "react-router-dom";
-
-export default function Pedidos() {
-  const navigate = useNavigate();
-
-  return (
-    <div style={containerStyle}>
-      <div style={sidebarStyle}>
-        <h2 style={logoStyle}>MuttiFlow</h2>
-
-        <button onClick={() => navigate("/dashboard")} style={menuStyle}>
-          📊 Dashboard
-        </button>
-
-        <button style={menuStyle}>
-          📦 Pedidos
-        </button>
-
-        <button onClick={() => navigate("/clientes")} style={menuStyle}>
-          👥 Clientes
-        </button>
-
-        <button onClick={() => navigate("/estoque")} style={menuStyle}>
-          📦 Estoque
-        </button>
-
-        <button onClick={() => navigate("/entregas")} style={menuStyle}>
-          🚚 Entregas
-        </button>
-
-        <div style={{ flex: 1 }} />
-
-        <button
-          onClick={() => navigate("/")}
-          style={{ ...menuStyle, backgroundColor: "#dc2626" }}
-        >
-          🚪 Sair
-        </button>
-      </div>
-
-      <div style={contentStyle}>
-        <h1>📦 Pedidos</h1>
-
-        <div style={cardStyle}>
-          <h3>Pedidos Ativos</h3>
-          <p>15 pedidos em andamento.</p>
-        </div>
-      </div>
-    </div>
-  );
 }
 
 const containerStyle = {
