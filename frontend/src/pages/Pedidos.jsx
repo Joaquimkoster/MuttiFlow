@@ -1,248 +1,110 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import AppLayout from "../components/AppLayout";
+
+const pedidos = [
+  {
+    id: 1,
+    cliente: "Maria",
+    endereco: "Rua das Flores, 123",
+    produto: "Bolo de Chocolate",
+    preco: 120.0,
+    entrega: "20/06/2026",
+    status: "Preparando",
+  },
+  {
+    id: 2,
+    cliente: "João",
+    endereco: "Av. Brasil, 450",
+    produto: "Torta de Limão",
+    preco: 75.5,
+    entrega: "21/06/2026",
+    status: "Entregue",
+  },
+  {
+    id: 3,
+    cliente: "Ana",
+    endereco: "Rua São José, 78",
+    produto: "Cupcakes",
+    preco: 60.0,
+    entrega: "22/06/2026",
+    status: "Agendado",
+  },
+];
 
 export default function Pedidos() {
-  const navigate = useNavigate();
-
   const [pesquisa, setPesquisa] = useState("");
 
-  const pedidos = [
-    {
-      id: 1,
-      cliente: "Maria",
-      endereco: "Rua das Flores, 123",
-      produto: "Bolo de Chocolate",
-      preco: 120.0,
-      entrega: "20/06/2026",
-      status: "Preparando",
-    },
-    {
-      id: 2,
-      cliente: "João",
-      endereco: "Av. Brasil, 450",
-      produto: "Torta de Limão",
-      preco: 75.5,
-      entrega: "21/06/2026",
-      status: "Entregue",
-    },
-    {
-      id: 3,
-      cliente: "Ana",
-      endereco: "Rua São José, 78",
-      produto: "Cupcakes",
-      preco: 60.0,
-      entrega: "22/06/2026",
-      status: "Agendado",
-    },
-  ];
+  const pedidosFiltrados = pedidos.filter((pedido) =>
+    pedido.cliente.toLowerCase().includes(pesquisa.toLowerCase()),
+  );
 
   return (
-    <div style={containerStyle}>
-      {}{" "}
-      <div style={sidebarStyle}>
-        {" "}
-        <h2 style={logoStyle}>MuttiFlow</h2>
-        <button onClick={() => navigate("/dashboard")} style={menuStyle}>
-          Dashboard
+    <AppLayout
+      title="Pedidos"
+      action={
+        <button type="button" className="button">
+          + Novo Pedido
         </button>
-        <button style={menuStyle}>Pedidos</button>
-        <button onClick={() => navigate("/eventos")} style={menuStyle}>
-          Eventos
-        </button>
-        <button onClick={() => navigate("/estoque")} style={menuStyle}>
-          Estoque
-        </button>
-        <button onClick={() => navigate("/planilha")} style={menuStyle}>
-          Planilha
-        </button>
-        <div style={{ flex: 1 }} />
-        <button
-          onClick={() => navigate("/")}
-          style={{
-            ...menuStyle,
-            backgroundColor: "#dc2626",
-          }}
-        >
-          Sair
-        </button>
+      }
+    >
+      <div className="filters">
+        <input
+          className="input"
+          type="text"
+          placeholder="Pesquisar cliente..."
+          value={pesquisa}
+          onChange={(event) => setPesquisa(event.target.value)}
+        />
+
+        <select className="select">
+          <option>Todos</option>
+          <option>Agendado</option>
+          <option>Preparando</option>
+          <option>Pronto</option>
+          <option>Entregue</option>
+        </select>
       </div>
-      {/* Conteúdo */}
-      <div style={contentStyle}>
-        <div style={topBarStyle}>
-          <h1>Pedidos</h1>
 
-          <button style={novoPedidoStyle}>+ Novo Pedido</button>
-        </div>
-
-        <div style={filtrosStyle}>
-          <input
-            type="text"
-            placeholder="Pesquisar cliente..."
-            value={pesquisa}
-            onChange={(e) => setPesquisa(e.target.value)}
-            style={inputStyle}
-          />
-
-          <select style={selectStyle}>
-            <option>Todos</option>
-            <option>Agendado</option>
-            <option>Preparando</option>
-            <option>Pronto</option>
-            <option>Entregue</option>
-          </select>
-        </div>
-
-        <div style={cardStyle}>
-          <table style={tableStyle}>
-            <thead>
-              <tr>
-                <th style={tableHeader}>Cliente</th>
-                <th style={tableHeader}>Endereço</th>
-                <th style={tableHeader}>Produto</th>
-                <th style={tableHeader}>Preço</th>
-                <th style={tableHeader}>Entrega</th>
-                <th style={tableHeader}>Status</th>
-                <th style={tableHeader}>Ações</th>
+      <section className="card table-card">
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th>Cliente</th>
+              <th>Endereço</th>
+              <th>Produto</th>
+              <th>Preço</th>
+              <th>Entrega</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {pedidosFiltrados.map((pedido) => (
+              <tr key={pedido.id}>
+                <td>{pedido.cliente}</td>
+                <td>{pedido.endereco}</td>
+                <td>{pedido.produto}</td>
+                <td>R$ {pedido.preco.toFixed(2)}</td>
+                <td>{pedido.entrega}</td>
+                <td>{pedido.status}</td>
+                <td>
+                  <div className="row-actions">
+                    <button type="button" className="button button-small">
+                      Editar
+                    </button>
+                    <button
+                      type="button"
+                      className="button button-small button-danger"
+                    >
+                      Excluir
+                    </button>
+                  </div>
+                </td>
               </tr>
-            </thead>
-
-            <tbody>
-              {pedidos.map((pedido) => (
-                <tr key={pedido.id}>
-                  <td style={tableCell}>{pedido.cliente}</td>
-                  <td style={tableCell}>{pedido.endereco}</td>
-                  <td style={tableCell}>{pedido.produto}</td>
-
-                  <td style={tableCell}>R$ {pedido.preco.toFixed(2)}</td>
-
-                  <td style={tableCell}>{pedido.entrega}</td>
-                  <td style={tableCell}>{pedido.status}</td>
-
-                  <td style={tableCell}>
-                    <button style={editarBtn}>Editar</button>
-
-                    <button style={excluirBtn}>Excluir</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+            ))}
+          </tbody>
+        </table>
+      </section>
+    </AppLayout>
   );
 }
-
-const containerStyle = {
-  display: "flex",
-  minHeight: "100vh",
-  backgroundColor: "#f1f5f9",
-};
-
-const sidebarStyle = {
-  width: "250px",
-  backgroundColor: "#0f172a",
-  color: "white",
-  padding: "25px",
-  display: "flex",
-  flexDirection: "column",
-};
-
-const logoStyle = {
-  color: "#60a5fa",
-  marginBottom: "40px",
-};
-
-const menuStyle = {
-  backgroundColor: "#1e293b",
-  color: "white",
-  border: "none",
-  padding: "12px",
-  marginBottom: "10px",
-  borderRadius: "8px",
-  cursor: "pointer",
-  textAlign: "left",
-  width: "100%",
-};
-
-const contentStyle = {
-  flex: 1,
-  padding: "30px",
-};
-
-const topBarStyle = {
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  marginBottom: "20px",
-};
-
-const novoPedidoStyle = {
-  backgroundColor: "#2563eb",
-  color: "white",
-  border: "none",
-  padding: "12px 20px",
-  borderRadius: "8px",
-  cursor: "pointer",
-};
-
-const filtrosStyle = {
-  display: "flex",
-  gap: "15px",
-  marginBottom: "20px",
-};
-
-const inputStyle = {
-  padding: "10px",
-  borderRadius: "8px",
-  border: "1px solid #d1d5db",
-  width: "250px",
-};
-
-const selectStyle = {
-  padding: "10px",
-  borderRadius: "8px",
-  border: "1px solid #d1d5db",
-};
-
-const cardStyle = {
-  backgroundColor: "white",
-  padding: "20px",
-  borderRadius: "12px",
-  boxShadow: "0 2px 10px rgba(0,0,0,0.08)",
-};
-
-const tableStyle = {
-  width: "100%",
-  borderCollapse: "collapse",
-};
-
-const tableHeader = {
-  textAlign: "left",
-  padding: "12px",
-  borderBottom: "1px solid #e5e7eb",
-};
-
-const tableCell = {
-  padding: "12px",
-  borderBottom: "1px solid #e5e7eb",
-};
-
-const editarBtn = {
-  backgroundColor: "#2563eb",
-  color: "white",
-  border: "none",
-  padding: "8px 12px",
-  borderRadius: "6px",
-  marginRight: "8px",
-  cursor: "pointer",
-};
-
-const excluirBtn = {
-  backgroundColor: "#dc2626",
-  color: "white",
-  border: "none",
-  padding: "8px 12px",
-  borderRadius: "6px",
-  cursor: "pointer",
-};

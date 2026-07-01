@@ -51,128 +51,74 @@ export default function Cadastro() {
     }
   };
 
-  const inputStyle = {
-    width: "100%",
-    padding: "15px",
-    marginBottom: "15px",
-    border: "1px solid #d1d5db",
-    borderRadius: "8px",
-  };
-
   return (
-    <div style={{ display: "flex", width: "100vw", minHeight: "100vh" }}>
-      <div
-        style={{
-          flex: 1,
-          backgroundColor: "#0f172a",
-          color: "white",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          padding: "80px",
-        }}
-      >
-        <h1
-          style={{ fontSize: "4rem", color: "#60a5fa", marginBottom: "20px" }}
-        >
-          MuttiFlow
-        </h1>
+    <div className="auth-page">
+      <div className="auth-brand">
+        <h1>MuttiFlow</h1>
       </div>
 
-      <div
-        style={{
-          flex: 1,
-          backgroundColor: "#f8fafc",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: "32px",
-        }}
-      >
-        <form onSubmit={cadastrar} style={{ width: "400px", maxWidth: "100%" }}>
-          <h2 style={{ marginBottom: "25px", color: "#0f172a" }}>
-            Criar Conta
-          </h2>
+      <div className="auth-panel">
+        <form className="auth-form" onSubmit={cadastrar}>
+          <h2>Criar Conta</h2>
           <input
+            className="input"
             type="text"
             placeholder="Nome"
             value={nome}
             onChange={(e) => setNome(e.target.value)}
             autoComplete="name"
             required
-            style={inputStyle}
           />
           <input
+            className="input"
             type="email"
             placeholder="E-mail"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             autoComplete="email"
             required
-            style={inputStyle}
           />
           <input
+            className="input"
             type="password"
             placeholder="Senha (mínimo 6 caracteres)"
             value={senha}
             onChange={(e) => setSenha(e.target.value)}
             autoComplete="new-password"
             required
-            style={inputStyle}
           />
           <input
+            className="input"
             type="password"
             placeholder="Confirme sua senha"
             value={confirmacaoSenha}
             onChange={(e) => setConfirmacaoSenha(e.target.value)}
             autoComplete="new-password"
             required
-            style={{ ...inputStyle, marginBottom: "20px" }}
           />
           <button
+            className="button"
             type="submit"
             disabled={carregando}
-            style={{
-              width: "100%",
-              padding: "15px",
-              backgroundColor: carregando ? "#93c5fd" : "#2563eb",
-              color: "white",
-              border: "none",
-              borderRadius: "8px",
-              cursor: carregando ? "wait" : "pointer",
-              fontWeight: "bold",
-            }}
           >
             {carregando ? "Criando conta..." : "Criar Conta"}
           </button>
           {erro && (
-            <p
-              role="alert"
-              style={{ color: "#b91c1c", marginTop: "14px", fontSize: "14px" }}
-            >
+            <p role="alert" className="message message-error">
               {erro}
             </p>
           )}
           {sucesso && (
-            <p
-              role="status"
-              style={{ color: "#15803d", marginTop: "14px", fontSize: "14px" }}
-            >
+            <p role="status" className="message message-success">
               {sucesso}
             </p>
           )}
-          <p style={{ marginTop: "20px", textAlign: "center" }}>
+          <p className="auth-switch">
             Já possui conta?{" "}
             <button
               type="button"
               onClick={() => navigate("/")}
-              style={{
-                color: "#2563eb",
-                cursor: "pointer",
-                border: 0,
-                background: "none",
-                fontSize: "inherit",
-              }}
+              className="link-button"
             >
               Fazer login
             </button>

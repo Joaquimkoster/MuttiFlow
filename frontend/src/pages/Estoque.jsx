@@ -1,99 +1,115 @@
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import AppLayout from "../components/AppLayout";
+
+const produtos = [
+  {
+    id: 1,
+    nome: "Farinha de Trigo",
+    categoria: "Ingredientes",
+    quantidade: 30,
+    unidade: "kg",
+    minimo: 10,
+    validade: "15/10/2026",
+    status: "Disponível",
+  },
+  {
+    id: 2,
+    nome: "Chocolate Meio Amargo",
+    categoria: "Ingredientes",
+    quantidade: 5,
+    unidade: "kg",
+    minimo: 10,
+    validade: "20/09/2026",
+    status: "Baixo",
+  },
+  {
+    id: 3,
+    nome: "Caixas para Bolo",
+    categoria: "Embalagens",
+    quantidade: 120,
+    unidade: "un",
+    minimo: 50,
+    validade: "-",
+    status: "Disponível",
+  },
+];
 
 export default function Estoque() {
-  const navigate = useNavigate();
+  const [pesquisa, setPesquisa] = useState("");
+
+  const produtosFiltrados = produtos.filter((produto) =>
+    produto.nome.toLowerCase().includes(pesquisa.toLowerCase()),
+  );
 
   return (
-    <div style={containerStyle}>
-      <div style={sidebarStyle}>
-        <h2 style={logoStyle}>MuttiFlow</h2>
-
-        <button onClick={() => navigate("/dashboard")} style={menuStyle}>
-          Dashboard
+    <AppLayout
+      title="Estoque"
+      action={
+        <button type="button" className="button">
+          + Novo Produto
         </button>
+      }
+    >
+      <div className="filters">
+        <input
+          className="input"
+          type="text"
+          placeholder="Pesquisar produto..."
+          value={pesquisa}
+          onChange={(event) => setPesquisa(event.target.value)}
+        />
 
-        <button onClick={() => navigate("/pedidos")} style={menuStyle}>
-          Pedidos
-        </button>
-
-        <button onClick={() => navigate("/eventos")} style={menuStyle}>
-          Eventos
-        </button>
-
-        <button style={menuStyle}>
-          Estoque
-        </button>
-
-        <button onClick={() => navigate("/planilha")} style={menuStyle}>
-          Planilha
-        </button>
-
-        <div style={{ flex: 1 }} />
-
-        <button
-          onClick={() => navigate("/")}
-          style={{ ...menuStyle, backgroundColor: "#dc2626" }}
-        >
-          Sair
-        </button>
+        <select className="select">
+          <option>Todas Categorias</option>
+          <option>Ingredientes</option>
+          <option>Embalagens</option>
+          <option>Bebidas</option>
+          <option>Utensílios</option>
+        </select>
       </div>
 
-      <div style={contentStyle}>
-        <h1>Estoque</h1>
-
-        <div style={cardStyle}>
-          <h3>Produtos</h3>
-
-          <ul>
-            <li>Farinha - 20kg</li>
-            <li>Chocolate - 10kg</li>
-            <li>Leite Condensado - 30 un.</li>
-          </ul>
-        </div>
-      </div>
-    </div>
+      <section className="card table-card">
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th>Produto</th>
+              <th>Categoria</th>
+              <th>Quantidade</th>
+              <th>Unidade</th>
+              <th>Mínimo</th>
+              <th>Validade</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {produtosFiltrados.map((produto) => (
+              <tr key={produto.id}>
+                <td>{produto.nome}</td>
+                <td>{produto.categoria}</td>
+                <td>{produto.quantidade}</td>
+                <td>{produto.unidade}</td>
+                <td>{produto.minimo}</td>
+                <td>{produto.validade}</td>
+                <td>{produto.status}</td>
+                <td>
+                  <div className="row-actions">
+                    <button type="button" className="button button-small">
+                      Editar
+                    </button>
+                    <button
+                      type="button"
+                      className="button button-small button-danger"
+                    >
+                      Excluir
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+    </AppLayout>
   );
 }
-
-const containerStyle = {
-  display: "flex",
-  minHeight: "100vh",
-  backgroundColor: "#f1f5f9",
-};
-
-const sidebarStyle = {
-  width: "250px",
-  backgroundColor: "#0f172a",
-  color: "white",
-  padding: "25px",
-  display: "flex",
-  flexDirection: "column",
-};
-
-const logoStyle = {
-  color: "#60a5fa",
-  marginBottom: "40px",
-};
-
-const menuStyle = {
-  backgroundColor: "#1e293b",
-  color: "white",
-  border: "none",
-  padding: "12px",
-  marginBottom: "10px",
-  borderRadius: "8px",
-  cursor: "pointer",
-  textAlign: "left",
-  width: "100%",
-};
-
-const contentStyle = {
-  flex: 1,
-  padding: "30px",
-};
-
-const cardStyle = {
-  backgroundColor: "white",
-  padding: "20px",
-  borderRadius: "12px",
-};

@@ -1,206 +1,69 @@
-import { useNavigate } from "react-router-dom";
+import AppLayout from "../components/AppLayout";
+
+const metricas = [
+  { label: "Pedidos Hoje", valor: "15" },
+  { label: "Clientes", valor: "42" },
+  { label: "Estoque Baixo", valor: "3" },
+  { label: "Planilhas Hoje", valor: "7" },
+];
+
+const ultimosPedidos = [
+  {
+    cliente: "Maria",
+    produto: "Bolo de Chocolate",
+    entrega: "20/06/2026",
+    status: "Preparando",
+  },
+  {
+    cliente: "João",
+    produto: "Torta de Limão",
+    entrega: "21/06/2026",
+    status: "Entregue",
+  },
+  {
+    cliente: "Ana",
+    produto: "Cupcakes",
+    entrega: "22/06/2026",
+    status: "Agendado",
+  },
+];
 
 export default function Dashboard() {
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    navigate("/");
-  };
-
-  const irDashboard = () => navigate("/dashboard");
-  const irPedidos = () => navigate("/pedidos");
-  const irEventos = () => navigate("/eventos");
-  const irEstoque = () => navigate("/estoque");
-  const irPlanilha = () => navigate("/planilha");
-
   return (
-    <div
-      style={{
-        display: "flex",
-        minHeight: "100vh",
-        backgroundColor: "#f1f5f9",
-      }}
-    >
-      {/* Sidebar */}
-      <div
-        style={{
-          width: "250px",
-          backgroundColor: "#0f172a",
-          color: "white",
-          padding: "25px",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <h2
-          style={{
-            color: "#60a5fa",
-            marginBottom: "40px",
-          }}
-        >
-          MuttiFlow
-        </h2>
+    <AppLayout title="Dashboard">
+      <section className="stats-grid">
+        {metricas.map((metrica) => (
+          <article className="card stat-card" key={metrica.label}>
+            <h3>{metrica.label}</h3>
+            <strong>{metrica.valor}</strong>
+          </article>
+        ))}
+      </section>
 
-        <button onClick={irDashboard} style={menuStyle}>
-          Dashboard
-        </button>
+      <section className="card table-card">
+        <h2>Últimos Pedidos</h2>
 
-        <button onClick={irPedidos} style={menuStyle}>
-          Pedidos
-        </button>
-
-        <button onClick={irEventos} style={menuStyle}>
-          Eventos
-        </button>
-
-        <button onClick={irEstoque} style={menuStyle}>
-          Estoque
-        </button>
-
-        <button onClick={irPlanilha} style={menuStyle}>
-          Planilha
-        </button>
-
-        <div style={{ flex: 1 }} />
-
-        <button
-          onClick={handleLogout}
-          style={{
-            ...menuStyle,
-            backgroundColor: "#dc2626",
-          }}
-        >
-          Sair
-        </button>
-      </div>
-
-      {/* Conteúdo Principal */}
-      <div
-        style={{
-          flex: 1,
-          padding: "30px",
-        }}
-      >
-        <h1
-          style={{
-            color: "#0f172a",
-            marginBottom: "30px",
-          }}
-        >
-          Dashboard
-        </h1>
-
-        <div
-          style={{
-            display: "flex",
-            gap: "20px",
-            flexWrap: "wrap",
-            marginBottom: "30px",
-          }}
-        >
-          <div style={cardStyle}>
-            <h3>Pedidos Hoje</h3>
-            <h1>15</h1>
-          </div>
-
-          <div style={cardStyle}>
-            <h3>Clientes</h3>
-            <h1>42</h1>
-          </div>
-
-          <div style={cardStyle}>
-            <h3>Estoque Baixo</h3>
-            <h1>3</h1>
-          </div>
-
-          <div style={cardStyle}>
-            <h3>Planilhas Hoje</h3>
-            <h1>7</h1>
-          </div>
-        </div>
-
-        <div
-          style={{
-            backgroundColor: "white",
-            borderRadius: "12px",
-            padding: "20px",
-            boxShadow: "0 2px 10px rgba(0,0,0,0.08)",
-          }}
-        >
-          <h2>Últimos Pedidos</h2>
-
-          <table
-            style={{
-              width: "100%",
-              borderCollapse: "collapse",
-              marginTop: "20px",
-            }}
-          >
-            <thead>
-              <tr>
-                <th style={tableHeader}>Cliente</th>
-                <th style={tableHeader}>Produto</th>
-                <th style={tableHeader}>Entrega</th>
-                <th style={tableHeader}>Status</th>
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th>Cliente</th>
+              <th>Produto</th>
+              <th>Entrega</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {ultimosPedidos.map((pedido) => (
+              <tr key={`${pedido.cliente}-${pedido.produto}`}>
+                <td>{pedido.cliente}</td>
+                <td>{pedido.produto}</td>
+                <td>{pedido.entrega}</td>
+                <td>{pedido.status}</td>
               </tr>
-            </thead>
-
-            <tbody>
-              <tr>
-                <td style={tableCell}>Maria</td>
-                <td style={tableCell}>Bolo de Chocolate</td>
-                <td style={tableCell}>20/06/2026</td>
-                <td style={tableCell}>Preparando</td>
-              </tr>
-
-              <tr>
-                <td style={tableCell}>João</td>
-                <td style={tableCell}>Torta de Limão</td>
-                <td style={tableCell}>21/06/2026</td>
-                <td style={tableCell}>Entregue</td>
-              </tr>
-
-              <tr>
-                <td style={tableCell}>Ana</td>
-                <td style={tableCell}>Cupcakes</td>
-                <td style={tableCell}>22/06/2026</td>
-                <td style={tableCell}>Agendado</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+            ))}
+          </tbody>
+        </table>
+      </section>
+    </AppLayout>
   );
 }
-
-const menuStyle = {
-  backgroundColor: "#1e293b",
-  color: "white",
-  border: "none",
-  padding: "12px",
-  marginBottom: "10px",
-  borderRadius: "8px",
-  cursor: "pointer",
-  textAlign: "left",
-  width: "100%",
-};
-
-const cardStyle = {
-  backgroundColor: "white",
-  padding: "20px",
-  borderRadius: "12px",
-  minWidth: "220px",
-  boxShadow: "0 2px 10px rgba(0,0,0,0.08)",
-};
-
-const tableHeader = {
-  textAlign: "left",
-  padding: "12px",
-  borderBottom: "1px solid #e5e7eb",
-};
-
-const tableCell = {
-  padding: "12px",
-  borderBottom: "1px solid #e5e7eb",
-};

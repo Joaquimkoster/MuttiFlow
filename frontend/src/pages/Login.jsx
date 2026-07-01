@@ -42,145 +42,65 @@ export default function Login() {
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        width: "100vw",
-        height: "100vh",
-      }}
-    >
-      <div
-        style={{
-          flex: 1,
-          backgroundColor: "#0f172a",
-          color: "white",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          padding: "80px",
-        }}
-      >
-        <h1
-          style={{
-            fontSize: "4rem",
-            marginBottom: "20px",
-            color: "#60a5fa",
-          }}
-        >
-          MuttiFlow
-        </h1>
+    <div className="auth-page">
+      <div className="auth-brand">
+        <h1>MuttiFlow</h1>
       </div>
 
-      <div
-        style={{
-          flex: 1,
-          backgroundColor: "#f8fafc",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <form
-          onSubmit={handleLogin}
-          style={{
-            width: "400px",
-          }}
-        >
-          <h2
-            style={{
-              marginBottom: "25px",
-              color: "#0f172a",
-            }}
-          >
-            Entrar
-          </h2>
+      <div className="auth-panel">
+        <form className="auth-form" onSubmit={handleLogin}>
+          <h2>Entrar</h2>
 
           <input
+            className="input"
             type="email"
             placeholder="Digite seu email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             autoComplete="email"
             required
-            style={{
-              width: "100%",
-              padding: "15px",
-              marginBottom: "15px",
-              border: "1px solid #d1d5db",
-              borderRadius: "8px",
-              fontSize: "16px",
-            }}
           />
 
           <input
+            className="input"
             type="password"
             placeholder="Digite sua senha"
             value={senha}
             onChange={(e) => setSenha(e.target.value)}
             autoComplete="current-password"
             required
-            style={{
-              width: "100%",
-              padding: "15px",
-              marginBottom: "20px",
-              border: "1px solid #d1d5db",
-              borderRadius: "8px",
-              fontSize: "16px",
-            }}
           />
 
           <button
+            className="button"
             type="submit"
             disabled={carregando}
-            style={{
-              width: "100%",
-              padding: "15px",
-              backgroundColor: "#2563eb",
-              color: "white",
-              border: "none",
-              borderRadius: "8px",
-              cursor: "pointer",
-              fontSize: "16px",
-              fontWeight: "bold",
-            }}
           >
             {carregando ? "Entrando..." : "Entrar"}
           </button>
 
           {erro && (
-            <p role="alert" style={{ color: "#b91c1c", marginTop: "14px", fontSize: "14px" }}>
+            <p role="alert" className="message message-error">
               {erro}
             </p>
           )}
 
-          <div
-            style={{
-              marginTop: "20px",
-              display: "flex",
-              justifyContent: "space-between",
-            }}
-          >
-            <span
+          <div className="auth-links">
+            <button
+              type="button"
               onClick={handleRecuperarSenha}
-              style={{
-                color: "#2563eb",
-                cursor: "pointer",
-                fontSize: "14px",
-              }}
+              className="link-button"
             >
               Esqueci minha senha
-            </span>
+            </button>
 
-            <span
+            <button
+              type="button"
               onClick={handleCadastro}
-              style={{
-                color: "#2563eb",
-                cursor: "pointer",
-                fontSize: "14px",
-              }}
+              className="link-button"
             >
               Criar conta
-            </span>
+            </button>
           </div>
         </form>
       </div>

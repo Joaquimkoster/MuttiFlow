@@ -1,99 +1,72 @@
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import AppLayout from "../components/AppLayout";
+
+const preview = [
+  { cliente: "Maria", produto: "Bolo", quantidade: 2, valor: "R$ 180,00" },
+  { cliente: "João", produto: "Torta", quantidade: 1, valor: "R$ 95,00" },
+  { cliente: "Ana", produto: "Cupcake", quantidade: 24, valor: "R$ 240,00" },
+];
 
 export default function Planilha() {
-  const navigate = useNavigate();
+  const [arquivo, setArquivo] = useState(null);
 
   return (
-    <div style={containerStyle}>
-      <div style={sidebarStyle}>
-        <h2 style={logoStyle}>MuttiFlow</h2>
-
-        <button onClick={() => navigate("/dashboard")} style={menuStyle}>
-          Dashboard
+    <AppLayout
+      title="Planilha"
+      action={
+        <button type="button" className="button">
+          Importar Planilha
         </button>
+      }
+    >
+      <div className="stack">
+        <section className="card file-box">
+          <h2>Selecionar Arquivo Excel</h2>
 
-        <button onClick={() => navigate("/pedidos")} style={menuStyle}>
-          Pedidos
-        </button>
+          <input
+            className="input"
+            type="file"
+            accept=".xlsx,.xls"
+            onChange={(event) => setArquivo(event.target.files[0])}
+          />
 
-        <button onClick={() => navigate("/eventos")} style={menuStyle}>
-          Eventos
-        </button>
+          {arquivo && (
+            <div className="file-info">
+              <p>
+                <strong>Arquivo:</strong> {arquivo.name}
+              </p>
+              <p>
+                <strong>Tamanho:</strong> {(arquivo.size / 1024).toFixed(2)} KB
+              </p>
+            </div>
+          )}
+        </section>
 
-        <button onClick={() => navigate("/estoque")} style={menuStyle}>
-          Estoque
-        </button>
+        <section className="card table-card">
+          <h2>Pré-visualização</h2>
 
-        <button style={menuStyle}>
-          Planilha
-        </button>
-
-        <div style={{ flex: 1 }} />
-
-        <button
-          onClick={() => navigate("/")}
-          style={{ ...menuStyle, backgroundColor: "#dc2626" }}
-        >
-          Sair
-        </button>
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Cliente</th>
+                <th>Produto</th>
+                <th>Quantidade</th>
+                <th>Valor</th>
+              </tr>
+            </thead>
+            <tbody>
+              {preview.map((linha) => (
+                <tr key={`${linha.cliente}-${linha.produto}`}>
+                  <td>{linha.cliente}</td>
+                  <td>{linha.produto}</td>
+                  <td>{linha.quantidade}</td>
+                  <td>{linha.valor}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
       </div>
-
-      <div style={contentStyle}>
-        <h1>Planilha</h1>
-
-        <div style={cardStyle}>
-          <h3>Próximas Planilhas</h3>
-
-          <ul>
-            <li>Maria - 20/06/2026</li>
-            <li>João - 21/06/2026</li>
-            <li>Ana - 22/06/2026</li>
-          </ul>
-        </div>
-      </div>
-    </div>
+    </AppLayout>
   );
 }
-
-const containerStyle = {
-  display: "flex",
-  minHeight: "100vh",
-  backgroundColor: "#f1f5f9",
-};
-
-const sidebarStyle = {
-  width: "250px",
-  backgroundColor: "#0f172a",
-  color: "white",
-  padding: "25px",
-  display: "flex",
-  flexDirection: "column",
-};
-
-const logoStyle = {
-  color: "#60a5fa",
-  marginBottom: "40px",
-};
-
-const menuStyle = {
-  backgroundColor: "#1e293b",
-  color: "white",
-  border: "none",
-  padding: "12px",
-  marginBottom: "10px",
-  borderRadius: "8px",
-  cursor: "pointer",
-  textAlign: "left",
-  width: "100%",
-};
-
-const contentStyle = {
-  flex: 1,
-  padding: "30px",
-};
-
-const cardStyle = {
-  backgroundColor: "white",
-  padding: "20px",
-  borderRadius: "12px",
-};
