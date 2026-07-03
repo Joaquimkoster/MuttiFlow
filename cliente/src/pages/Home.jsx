@@ -1,0 +1,55 @@
+import { Link } from 'react-router-dom'
+import { FiArrowRight } from 'react-icons/fi'
+import { products, reviews } from '../data/menuData'
+import { PageHero, ProductCard, SectionHeader } from '../components/ui'
+
+export default function Home() {
+  const featured = products.filter((product) => product.featured)
+
+  return (
+    <>
+      <PageHero
+        eyebrow="Cardápio premium MuttiFlow"
+        title="Peça pratos artesanais com uma experiência simples, elegante e rápida."
+        text="Um cardápio online conectado ao atendimento e pronto para receber pedidos com a mesma identidade do painel administrativo."
+        image={products[0].image}
+      >
+        <Link className="button primary" to="/cardapio">Ver Cardápio <FiArrowRight /></Link>
+        <Link className="button secondary" to="/sobre">Conhecer a história</Link>
+      </PageHero>
+
+      <section className="container section-block">
+        <SectionHeader
+          eyebrow="Destaques"
+          title="Mais pedidos da semana"
+          text="Produtos com alta avaliação, descrição clara e ação rápida para compra."
+          action={<Link className="button secondary" to="/cardapio">Ver todos</Link>}
+        />
+        <div className="product-grid">
+          {featured.map((product) => <ProductCard key={product.id} product={product} />)}
+        </div>
+      </section>
+
+      <section className="reviews-band">
+        <div className="container section-block">
+          <SectionHeader eyebrow="Avaliações" title="Clientes satisfeitos, pedidos recorrentes" />
+          <div className="review-grid">
+            {reviews.map((review) => (
+              <article className="review-card" key={review.name}>
+                <strong>{'★'.repeat(review.rating)}</strong>
+                <p>{review.text}</p>
+                <div className="avatar-line">
+                  <span className="avatar">{review.name.charAt(0)}</span>
+                  <div>
+                    <h3>{review.name}</h3>
+                    <small>{review.role}</small>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+    </>
+  )
+}
