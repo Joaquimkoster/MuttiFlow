@@ -14,7 +14,7 @@ export function PageHero({ eyebrow, title, text, children, image }) {
     <section className="page-hero">
       <div className="container hero-grid">
         <div className="hero-copy">
-          <span className="eyebrow">{eyebrow}</span>
+          {eyebrow && <span className="eyebrow">{eyebrow}</span>}
           <h1>{title}</h1>
           <p>{text}</p>
           {children && <div className="hero-actions">{children}</div>}

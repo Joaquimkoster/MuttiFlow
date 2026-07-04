@@ -18,9 +18,7 @@ export default function Cardapio() {
 
   return (
     <section className="container menu-page">
-      <div className="breadcrumb">Home / Cardápio</div>
       <SectionHeader
-        eyebrow="Cardápio"
         title="Escolha seus pratos"
         text="Pesquisa, filtros por categoria, cards responsivos e carrinho sempre acessível."
       />

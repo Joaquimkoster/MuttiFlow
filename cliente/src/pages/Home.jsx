@@ -9,7 +9,6 @@ export default function Home() {
   return (
     <>
       <PageHero
-        eyebrow="Cardápio premium MuttiFlow"
         title="Peça pratos artesanais com uma experiência simples, elegante e rápida."
         text="Um cardápio online conectado ao atendimento e pronto para receber pedidos com a mesma identidade do painel administrativo."
         image={products[0].image}
@@ -20,7 +19,6 @@ export default function Home() {
 
       <section className="container section-block">
         <SectionHeader
-          eyebrow="Destaques"
           title="Mais pedidos da semana"
           text="Produtos com alta avaliação, descrição clara e ação rápida para compra."
           action={<Link className="button secondary" to="/cardapio">Ver todos</Link>}
@@ -32,7 +30,7 @@ export default function Home() {
 
       <section className="reviews-band">
         <div className="container section-block">
-          <SectionHeader eyebrow="Avaliações" title="Clientes satisfeitos, pedidos recorrentes" />
+          <SectionHeader title="Clientes satisfeitos, pedidos recorrentes" />
           <div className="review-grid">
             {reviews.map((review) => (
               <article className="review-card" key={review.name}>
