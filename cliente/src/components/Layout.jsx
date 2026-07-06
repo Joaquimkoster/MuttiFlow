@@ -13,7 +13,8 @@ import {
 const navItems = [
   { label: 'Home', path: '/' },
   { label: 'Cardápio', path: '/cardapio' },
-  { label: 'História', path: '/sobre' },
+  { label: 'Eventos', path: '/eventos' },
+  { label: 'História', path: '/historia' },
   { label: 'Contato', path: '/contato' },
 ]
 
@@ -79,7 +80,6 @@ export function Layout({ children }) {
               <span className="brand-mark">M</span>
               <span>
                 <strong>MuttiFlow</strong>
-                <small>Cardápio online</small>
               </span>
             </Link>
             <p>Uma experiência de pedidos elegante, rápida e conectada ao painel administrativo.</p>
@@ -88,7 +88,7 @@ export function Layout({ children }) {
             <h3>Navegação</h3>
             <a href="/cardapio">Cardápio</a>
             <a href="/checkout">Checkout</a>
-            <a href="/sobre">Sobre</a>
+            <a href="/historia">História</a>
           </div>
           <div>
             <h3>Contato</h3>

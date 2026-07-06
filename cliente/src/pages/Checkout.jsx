@@ -5,9 +5,7 @@ export default function Checkout() {
   return (
     <section className="container checkout-layout">
       <div>
-        <div className="breadcrumb">Home / Carrinho / Checkout</div>
         <SectionHeader
-          eyebrow="Checkout"
           title="Dados para entrega"
           text="Formulário objetivo, estados consistentes e resumo fixo em telas maiores."
         />

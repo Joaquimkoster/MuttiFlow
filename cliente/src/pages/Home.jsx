@@ -14,7 +14,7 @@ export default function Home() {
         image={products[0].image}
       >
         <Link className="button primary" to="/cardapio">Ver Cardápio <FiArrowRight /></Link>
-        <Link className="button secondary" to="/sobre">Conhecer a história</Link>
+        <Link className="button secondary" to="/historia">Conhecer a história</Link>
       </PageHero>
 
       <section className="container section-block">

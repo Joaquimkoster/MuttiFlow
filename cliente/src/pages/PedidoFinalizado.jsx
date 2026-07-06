@@ -6,7 +6,7 @@ export default function PedidoFinalizado() {
     <section className="container success-page">
       <div className="success-card">
         <span className="success-icon"><FiCheckCircle /></span>
-        <span className="eyebrow">Pedido finalizado</span>
+      
         <h1>Recebemos seu pedido com sucesso.</h1>
         <p>O número do pedido é <strong>#MF-2048</strong>. A equipe já recebeu os dados e iniciará a preparação.</p>
         <div className="success-metrics">

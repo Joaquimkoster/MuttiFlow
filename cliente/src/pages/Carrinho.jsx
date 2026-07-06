@@ -7,9 +7,7 @@ export default function Carrinho() {
   return (
     <section className="container checkout-layout">
       <div>
-        <div className="breadcrumb">Home / Carrinho</div>
         <SectionHeader
-          eyebrow="Carrinho"
           title="Revise seus produtos"
           text="Ajuste quantidades, remova itens e aplique um cupom antes de continuar."
         />

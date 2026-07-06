@@ -6,9 +6,7 @@ export default function Confirmacao() {
   return (
     <section className="container checkout-layout">
       <div>
-        <div className="breadcrumb">Home / Checkout / Confirmação</div>
         <SectionHeader
-          eyebrow="Confirmação"
           title="Confira os dados antes de enviar"
           text="Uma última revisão clara reduz erros e aumenta confiança no pedido."
         />

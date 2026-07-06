@@ -5,7 +5,6 @@ export default function Contato() {
   return (
     <section className="container contact-page section-block">
       <SectionHeader
-        eyebrow="Contato"
         title="Canais oficiais"
         text="Atendimento por WhatsApp, redes sociais, endereço e horário de funcionamento."
       />

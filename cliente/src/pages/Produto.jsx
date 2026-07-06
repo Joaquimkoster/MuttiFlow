@@ -11,7 +11,6 @@ export default function Produto() {
 
   return (
     <section className="container product-page">
-      <div className="breadcrumb">Home / Cardápio / {product.name}</div>
       <div className="product-detail-grid">
         <div className="gallery">
           <img className="main-photo" src={product.image} alt={product.name} />
@@ -50,7 +49,7 @@ export default function Produto() {
       </div>
 
       <section className="section-block">
-        <SectionHeader eyebrow="Sugestões" title="Também combina com" />
+        <SectionHeader title="Também combina com" />
         <div className="product-grid">
           {related.map((item) => <ProductCard key={item.id} product={item} compact />)}
         </div>

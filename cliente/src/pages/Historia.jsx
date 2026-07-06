@@ -6,7 +6,6 @@ export default function Sobre() {
       <section className="container story-grid section-block">
         <div>
           <SectionHeader
-            eyebrow="História"
             title="Da cozinha de família para um cardápio profissional"
             text="O projeto nasceu para organizar pedidos, preservar receitas e oferecer uma jornada digital compatível com marcas premium."
           />
@@ -23,7 +22,7 @@ export default function Sobre() {
 
       <section className="team-band">
         <div className="container section-block">
-          <SectionHeader eyebrow="Equipe" title="Pessoas por trás da operação" />
+          <SectionHeader title="Pessoas por trás da operação" />
           <div className="team-grid">
             {['Clara Mutti', 'André Souza', 'Lia Martins'].map((name) => (
               <article className="team-card" key={name}>
