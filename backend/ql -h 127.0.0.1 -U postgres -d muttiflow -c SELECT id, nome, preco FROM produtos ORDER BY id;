@@ -1,0 +1,30 @@
+                                         Table "public.produtos"
+    Column    |            Type             | Collation | Nullable |               Default                
+--------------+-----------------------------+-----------+----------+--------------------------------------
+ id           | integer                     |           | not null | nextval('produtos_id_seq'::regclass)
+ nome         | character varying(255)      |           | not null | 
+ slug         | character varying(255)      |           | not null | 
+ categoria_id | integer                     |           |          | 
+ descricao    | text                        |           |          | 
+ preco        | numeric(10,2)               |           | not null | 
+ preco_antigo | numeric(10,2)               |           |          | 
+ imagens      | jsonb                       |           |          | '[]'::jsonb
+ ingredientes | jsonb                       |           |          | '[]'::jsonb
+ peso         | character varying(50)       |           |          | 
+ porcao       | character varying(50)       |           |          | 
+ badge        | character varying(50)       |           |          | 
+ featured     | boolean                     |           |          | false
+ sku          | character varying(100)      |           |          | 
+ estoque      | integer                     |           |          | 0
+ status       | character varying(20)       |           |          | 'ativo'::character varying
+ ordenacao    | integer                     |           |          | 0
+ created_at   | timestamp without time zone |           |          | now()
+ updated_at   | timestamp without time zone |           |          | now()
+Indexes:
+    "produtos_pkey" PRIMARY KEY, btree (id)
+    "produtos_slug_key" UNIQUE CONSTRAINT, btree (slug)
+Foreign-key constraints:
+    "produtos_categoria_id_fkey" FOREIGN KEY (categoria_id) REFERENCES categorias(id) ON DELETE SET NULL
+Triggers:
+    update_produtos_modtime BEFORE UPDATE ON produtos FOR EACH ROW EXECUTE FUNCTION update_modified_column()
+
