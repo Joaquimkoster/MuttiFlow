@@ -223,6 +223,13 @@
   transform: translateY(-1px);
 }
 
+.button:disabled,
+.icon-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  transform: none;
+}
+
 .button.primary {
   background: var(--primary);
   color: #ffffff;
@@ -869,6 +876,11 @@ td {
   place-items: center;
 }
 
+.qty-stepper button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
 .qty-stepper span {
   text-align: center;
   font-weight: 900;
@@ -886,6 +898,41 @@ td {
 .cart-list {
   padding: 0;
   overflow: hidden;
+}
+
+.cart-state {
+  padding: 28px;
+  display: grid;
+  gap: 10px;
+}
+
+.cart-state p {
+  color: var(--muted);
+  margin: 0;
+}
+
+.state-card {
+  margin-bottom: 16px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.state-card p {
+  margin: 0;
+}
+
+.error-state {
+  border-color: #fecaca;
+  color: var(--error);
+}
+
+.form-error {
+  color: var(--error);
+  font-weight: 700;
+  margin: 0;
 }
 
 .cart-line {

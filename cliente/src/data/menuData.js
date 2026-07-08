@@ -21,6 +21,7 @@ export const categories = [
 export const products = [
   {
     id: 'lasanha-familia',
+    backendId: 1,
     name: 'Lasanha Família Mutti',
     category: 'massas',
     price: 89.9,
@@ -38,6 +39,7 @@ export const products = [
   },
   {
     id: 'combo-domingo',
+    backendId: 2,
     name: 'Combo Domingo Italiano',
     category: 'combos',
     price: 149.9,
@@ -54,6 +56,7 @@ export const products = [
   },
   {
     id: 'ravioli-caprese',
+    backendId: 3,
     name: 'Ravioli Caprese',
     category: 'massas',
     price: 64.9,
@@ -70,6 +73,7 @@ export const products = [
   },
   {
     id: 'tiramisu',
+    backendId: 4,
     name: 'Tiramisù Clássico',
     category: 'sobremesas',
     price: 32.9,
@@ -86,6 +90,7 @@ export const products = [
   },
   {
     id: 'focaccia',
+    backendId: 5,
     name: 'Focaccia da Casa',
     category: 'massas',
     price: 28.9,
@@ -102,6 +107,7 @@ export const products = [
   },
   {
     id: 'limonada',
+    backendId: 6,
     name: 'Limonada Siciliana',
     category: 'bebidas',
     price: 16.9,

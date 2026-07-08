@@ -94,17 +94,21 @@ export function CategoryChips({ categories, activeCategory, onSelect }) {
   )
 }
 
-export function QuantityStepper({ value = 1 }) {
+export function QuantityStepper({ value = 1, onDecrease, onIncrease, disabled = false }) {
   return (
     <div className="qty-stepper" aria-label="Quantidade">
-      <button type="button" aria-label="Diminuir"><FiMinus /></button>
+      <button type="button" aria-label="Diminuir" onClick={onDecrease} disabled={disabled}>
+        <FiMinus />
+      </button>
       <span>{value}</span>
-      <button type="button" aria-label="Aumentar"><FiPlus /></button>
+      <button type="button" aria-label="Aumentar" onClick={onIncrease} disabled={disabled}>
+        <FiPlus />
+      </button>
     </div>
   )
 }
 
-export function CartLine({ item }) {
+export function CartLine({ item, onDecrease, onIncrease, onRemove, disabled = false }) {
   return (
     <div className="cart-line">
       <img src={item.image} alt={item.name} />
@@ -113,15 +117,26 @@ export function CartLine({ item }) {
         <p>{item.serves}</p>
         <strong className="price">{formatCurrency(item.price)}</strong>
       </div>
-      <QuantityStepper value={item.quantity} />
-      <button className="icon-button danger" type="button" aria-label="Remover item">
+      <QuantityStepper
+        value={item.quantity}
+        onDecrease={onDecrease}
+        onIncrease={onIncrease}
+        disabled={disabled}
+      />
+      <button
+        className="icon-button danger"
+        type="button"
+        aria-label="Remover item"
+        onClick={onRemove}
+        disabled={disabled}
+      >
         <FiTrash2 />
       </button>
     </div>
   )
 }
 
-export function OrderSummary({ items, delivery = 12, coupon = 15, cta = 'Continuar', to = '/checkout' }) {
+export function OrderSummary({ items, delivery = 7, coupon = 0, cta = 'Continuar', to = '/checkout' }) {
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
   const total = subtotal + delivery - coupon
 

@@ -1,13 +1,32 @@
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useState } from 'react'
 import { FiCheck, FiShoppingBag } from 'react-icons/fi'
 import { products } from '../data/menuData'
 import { ProductCard, QuantityStepper, SectionHeader } from '../components/ui'
 import { formatCurrency } from '../data/menuData'
+import { addCartItem } from '../services/cartApi'
 
 export default function Produto() {
   const { id } = useParams()
+  const navigate = useNavigate()
+  const [quantity, setQuantity] = useState(1)
+  const [isAdding, setIsAdding] = useState(false)
+  const [error, setError] = useState('')
   const product = products.find((item) => item.id === id) ?? products[0]
   const related = products.filter((item) => item.id !== product.id).slice(0, 3)
+
+  async function handleAddToCart() {
+    try {
+      setIsAdding(true)
+      setError('')
+      await addCartItem(product.backendId, quantity)
+      navigate('/carrinho')
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setIsAdding(false)
+    }
+  }
 
   return (
     <section className="container product-page">
@@ -40,11 +59,18 @@ export default function Produto() {
           </div>
 
           <div className="buy-row">
-            <QuantityStepper value={1} />
-            <Link className="button primary" to="/carrinho">
-              <FiShoppingBag /> Adicionar ao carrinho
-            </Link>
+            <QuantityStepper
+              value={quantity}
+              disabled={isAdding}
+              onDecrease={() => setQuantity((value) => Math.max(1, value - 1))}
+              onIncrease={() => setQuantity((value) => value + 1)}
+            />
+            <button className="button primary" type="button" onClick={handleAddToCart} disabled={isAdding}>
+              <FiShoppingBag /> {isAdding ? 'Adicionando...' : 'Adicionar ao carrinho'}
+            </button>
           </div>
+
+          {error && <p className="form-error">{error}</p>}
         </article>
       </div>
 

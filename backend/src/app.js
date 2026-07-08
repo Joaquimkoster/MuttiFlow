@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const authRoutes = require('./routes/authRoutes');
 const { initializeDatabase } = require('./config/database');
+const carrinhoRoutes = require('./routes/carrinhosRoutes');
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.get('/health', (req, res) => {
 });
 
 app.use('/auth', authRoutes);
+app.use('/carrinho', carrinhoRoutes);
 
 app.use((req, res) => {
 	res.status(404).json({ erro: 'Rota não encontrada.' });
