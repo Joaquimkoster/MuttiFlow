@@ -149,7 +149,7 @@ export function OrderSummary({ items, delivery = 7, coupon = 0, cta = 'Continuar
         <span>Frete</span>
         <strong>{formatCurrency(delivery)}</strong>
         <span>Cupom</span>
-        <strong className="success">-{formatCurrency(coupon)}</strong>
+        <strong>-{formatCurrency(coupon)}</strong>
       </div>
       <div className="summary-total">
         <span>Total</span>

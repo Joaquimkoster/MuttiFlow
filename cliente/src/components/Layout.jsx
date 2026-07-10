@@ -9,6 +9,7 @@ import {
   FiShoppingBag,
   FiX,
 } from 'react-icons/fi'
+import { useCart } from '../hooks/useCart'
 
 const navItems = [
   { label: 'Home', path: '/' },
@@ -20,6 +21,7 @@ const navItems = [
 
 export function Layout({ children }) {
   const [isOpen, setIsOpen] = useState(false)
+  const { itemCount } = useCart()
 
   return (
     <div className="client-app">
@@ -44,7 +46,7 @@ export function Layout({ children }) {
           <div className="nav-actions">
             <Link className="icon-button cart-shortcut" to="/carrinho" aria-label="Abrir carrinho">
               <FiShoppingBag />
-              <span>3</span>
+              {itemCount > 0 && <span>{itemCount}</span>}
             </Link>
             <button
               className="icon-button mobile-toggle"

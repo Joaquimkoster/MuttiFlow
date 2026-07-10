@@ -3,10 +3,12 @@ import { Link } from 'react-router-dom'
 import { FiSearch, FiShoppingBag } from 'react-icons/fi'
 import { categories, products } from '../data/menuData'
 import { CategoryChips, ProductCard, SectionHeader } from '../components/ui'
+import { useCart } from '../hooks/useCart'
 
 export default function Cardapio() {
   const [activeCategory, setActiveCategory] = useState('todos')
   const [search, setSearch] = useState('')
+  const { itemCount } = useCart()
 
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
@@ -42,7 +44,7 @@ export default function Cardapio() {
 
       <Link className="floating-cart" to="/carrinho" aria-label="Abrir carrinho">
         <FiShoppingBag />
-        <span>3 itens</span>
+        <span>{itemCount === 1 ? '1 item' : `${itemCount} itens`}</span>
       </Link>
     </section>
   )

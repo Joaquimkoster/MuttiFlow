@@ -1,14 +1,15 @@
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useState } from 'react'
 import { FiCheck, FiShoppingBag } from 'react-icons/fi'
 import { products } from '../data/menuData'
 import { ProductCard, QuantityStepper, SectionHeader } from '../components/ui'
 import { formatCurrency } from '../data/menuData'
-import { addCartItem } from '../services/cartApi'
+import { useCart } from '../hooks/useCart'
 
 export default function Produto() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const { addItem } = useCart()
   const [quantity, setQuantity] = useState(1)
   const [isAdding, setIsAdding] = useState(false)
   const [error, setError] = useState('')
@@ -19,7 +20,7 @@ export default function Produto() {
     try {
       setIsAdding(true)
       setError('')
-      await addCartItem(product.backendId, quantity)
+      await addItem(product.backendId, quantity)
       navigate('/carrinho')
     } catch (err) {
       setError(err.message)

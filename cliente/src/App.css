@@ -1054,13 +1054,13 @@ td {
   min-height: calc(100vh - 280px);
   display: grid;
   place-items: center;
-  padding: 72px 0;
+  padding: 120px 0;
 }
 
 .success-card {
   width: min(760px, 100%);
   text-align: center;
-  padding: 48px;
+  padding: 88px 72px;
   display: grid;
   justify-items: center;
   gap: 18px;
