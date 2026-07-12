@@ -64,3 +64,13 @@ export function clearCart() {
     method: 'DELETE',
   })
 }
+
+export function createOrder(deliveryData, couponCode) {
+  return request('/pedidos', {
+    method: 'POST',
+    body: JSON.stringify({
+      ...deliveryData,
+      cupom: couponCode.trim().toUpperCase(),
+    }),
+  });
+}

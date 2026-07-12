@@ -1,14 +1,37 @@
-import { Link, Navigate } from 'react-router-dom'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 import { CartLine, OrderSummary, SectionHeader } from '../components/ui'
 import { useCart } from '../hooks/useCart'
 
 export default function Confirmacao() {
+  const navigate = useNavigate()
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError,  setSubmitError] = useState('')
   const {
     couponDiscount,
     deliveryData,
     isLoading,
     items,
+    submitOrder,
   } = useCart()
+
+  async function handleSubmit() {
+  try {
+    setSubmitting(true);
+    setSubmitError('');
+
+    const pedido = await submitOrder();
+
+    navigate('/pedido-finalizado', {
+      state: {
+        pedidoId: pedido.id,
+      },
+    });
+  } catch (error) {
+    setSubmitError(error.message);
+    setSubmitting(false);
+  }
+}
 
   if (isLoading) {
     return <p>Carregando dados do pedido...</p>
@@ -34,6 +57,8 @@ export default function Confirmacao() {
             <div><dt>Pagamento</dt><dd>{deliveryData.pagamento || 'Não informado'}</dd></div>
             <div><dt>Endereço</dt><dd>{deliveryData.endereco || 'Não informado'}</dd></div>
             <div><dt>Complemento</dt><dd>{deliveryData.complemento || 'Não informado'}</dd></div>
+            <div><dt>Cidade</dt><dd>{deliveryData.cidade || 'Não informada'}</dd></div>
+            <div><dt>Bairro</dt><dd>{deliveryData.bairro || 'Não informado'}</dd></div>
             <div><dt>Data de entrega</dt><dd>{deliveryData.dataEntrega || 'Não informado'}</dd></div>
             <div><dt>Horário</dt><dd>{deliveryData.horario || 'Não informado'}</dd></div>
             <div><dt>Observações</dt><dd>{deliveryData.observacoes || 'Nenhuma'}</dd></div>
@@ -50,8 +75,10 @@ export default function Confirmacao() {
         items={items}
         coupon={couponDiscount}
         cta="Confirmar Pedido"
-        to="/pedido-finalizado"
+        onAction={handleSubmit}
+        disabled={submitting}
       />
+      {submitError && <p className="form-error">{submitError}</p>}
     </section>
   )
 }

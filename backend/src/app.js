@@ -5,6 +5,11 @@ const morgan = require('morgan');
 const authRoutes = require('./routes/authRoutes');
 const { initializeDatabase } = require('./config/database');
 const carrinhoRoutes = require('./routes/carrinhosRoutes');
+const pedidoRoutes = require('./routes/pedidoRoutes');
+const estoqueRoutes = require('./routes/estoqueRoutes');
+const eventoRoutes = require('./routes/eventoRoutes');
+const dashboardRoutes = require('./routes/dashboardRoutes');
+const pedidosRoutes = require('./routes/pedidoRoutes');
 
 const app = express();
 
@@ -19,6 +24,11 @@ app.get('/health', (req, res) => {
 
 app.use('/auth', authRoutes);
 app.use('/carrinho', carrinhoRoutes);
+app.use('/pedidos', pedidoRoutes);
+app.use('/estoque', estoqueRoutes);
+app.use('/eventos', eventoRoutes);
+app.use('/dashboard', dashboardRoutes);
+app.use('/pedido', pedidosRoutes);
 
 app.use((req, res) => {
 	res.status(404).json({ erro: 'Rota não encontrada.' });

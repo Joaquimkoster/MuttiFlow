@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { SectionHeader } from '../components/ui'
+import { createEvent } from '../services/eventApi'
 
 const tipos = [
   'Aniversário',
@@ -21,6 +22,8 @@ export default function Eventos() {
     valor: '',
     status: 'Aguardando',
   })
+  const [submitting, setSubmitting] = useState(false)
+  const [message, setMessage] = useState({ type: '', text: '' })
 
   function handleChange(e) {
     setForm({
@@ -29,27 +32,20 @@ export default function Eventos() {
     })
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
+    setSubmitting(true)
+    setMessage({ type: '', text: '' })
 
-    if (!form.cliente || !form.tipo || !form.data || !form.hora || !form.endereco || !form.convidados) {
-      alert('Por favor, preencha todos os campos obrigatórios.')
-      return
+    try {
+      await createEvent(form)
+      setMessage({ type: 'success', text: 'Solicitação enviada. Nossa equipe entrará em contato.' })
+      setForm({ cliente: '', tipo: '', data: '', hora: '', endereco: '', convidados: '', valor: '', status: 'Aguardando' })
+    } catch (error) {
+      setMessage({ type: 'error', text: error.message })
+    } finally {
+      setSubmitting(false)
     }
-
-    console.log(form)
-    alert('Solicitação enviada com sucesso! Nossa equipe entrará em contato em breve.')
-
-    setForm({
-      cliente: '',
-      tipo: '',
-      data: '',
-      hora: '',
-      endereco: '',
-      convidados: '',
-      valor: '',
-      status: 'Aguardando',
-    })
   }
 
   return (
@@ -73,6 +69,7 @@ export default function Eventos() {
               value={form.cliente}
               onChange={handleChange}
               placeholder="Nome completo"
+              required
             />
           </div>
 
@@ -83,6 +80,7 @@ export default function Eventos() {
               name="tipo"
               value={form.tipo}
               onChange={handleChange}
+              required
             >
               <option value="">Selecione</option>
 
@@ -101,6 +99,7 @@ export default function Eventos() {
                 name="data"
                 value={form.data}
                 onChange={handleChange}
+                required
               />
             </div>
 
@@ -112,6 +111,7 @@ export default function Eventos() {
                 name="hora"
                 value={form.hora}
                 onChange={handleChange}
+                required
               />
             </div>
           </div>
@@ -125,6 +125,7 @@ export default function Eventos() {
               value={form.endereco}
               onChange={handleChange}
               placeholder="Local do evento"
+              required
             />
           </div>
 
@@ -137,6 +138,8 @@ export default function Eventos() {
                 name="convidados"
                 value={form.convidados}
                 onChange={handleChange}
+                min="1"
+                required
               />
             </div>
 
@@ -148,6 +151,8 @@ export default function Eventos() {
                 name="valor"
                 value={form.valor}
                 onChange={handleChange}
+                min="0"
+                step="0.01"
               />
             </div>
           </div>
@@ -161,8 +166,9 @@ export default function Eventos() {
             />
           </div>
 
-          <button className="btn-primary">
-            Solicitar Evento
+          {message.text && <p className={`form-message ${message.type}`}>{message.text}</p>}
+          <button className="btn-primary" disabled={submitting}>
+            {submitting ? 'Enviando...' : 'Solicitar Evento'}
           </button>
         </form>
 

@@ -27,27 +27,6 @@ export default function Home() {
           {featured.map((product) => <ProductCard key={product.id} product={product} />)}
         </div>
       </section>
-
-      <section className="reviews-band">
-        <div className="container section-block">
-          <SectionHeader title="Clientes satisfeitos, pedidos recorrentes" />
-          <div className="review-grid">
-            {reviews.map((review) => (
-              <article className="review-card" key={review.name}>
-                <strong>{'★'.repeat(review.rating)}</strong>
-                <p>{review.text}</p>
-                <div className="avatar-line">
-                  <span className="avatar">{review.name.charAt(0)}</span>
-                  <div>
-                    <h3>{review.name}</h3>
-                    <small>{review.role}</small>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
     </>
   )
 }

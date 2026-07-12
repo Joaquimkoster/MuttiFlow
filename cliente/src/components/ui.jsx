@@ -136,7 +136,7 @@ export function CartLine({ item, onDecrease, onIncrease, onRemove, disabled = fa
   )
 }
 
-export function OrderSummary({ items, delivery = 7, coupon = 0, cta = 'Continuar', to = '/checkout' }) {
+export function OrderSummary({ items, delivery = 7, coupon = 0, cta = 'Continuar', to = '/checkout', onAction, disabled = false }) {
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
   const total = subtotal + delivery - coupon
 
@@ -155,9 +155,15 @@ export function OrderSummary({ items, delivery = 7, coupon = 0, cta = 'Continuar
         <span>Total</span>
         <strong>{formatCurrency(total)}</strong>
       </div>
-      <Link className="button primary full" to={to}>
-        {cta} <FiChevronRight />
-      </Link>
+      {onAction ? (
+        <button className="button primary full" type="button" onClick={onAction} disabled={disabled}>
+          {disabled ? 'Enviando...' : cta} <FiChevronRight />
+        </button>
+      ) : (
+        <Link className="button primary full" to={to}>
+          {cta} <FiChevronRight />
+        </Link>
+      )}
     </aside>
   )
 }

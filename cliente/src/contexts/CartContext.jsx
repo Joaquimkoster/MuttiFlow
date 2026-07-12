@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   addCartItem,
   clearCart,
+  createOrder,
   getCart,
   removeCartItem,
   updateCartItem,
@@ -34,6 +35,8 @@ export function CartProvider({ children }) {
     pagamento: '',
     endereco: '',
     complemento: '',
+    cidade: '',
+    bairro: '',
     dataEntrega: '',
     horario: '',
     observacoes: '',
@@ -90,6 +93,23 @@ export function CartProvider({ children }) {
     await loadCart()
   }
 
+  async function submitOrder() {
+  try {
+    setError('');
+
+    const order = await createOrder(
+      deliveryData,
+      couponCode
+    );
+
+    setCart(null);
+    return order;
+  } catch (err) {
+    setError(err.message);
+    throw err;
+  }
+}
+
   function applyCoupon() {
     if (couponCode.trim().toUpperCase() === 'MUTTI15') {
       setCouponDiscount(10)
@@ -119,6 +139,7 @@ export function CartProvider({ children }) {
         removeItem,
         setCouponCode,
         setError,
+        submitOrder,
         updateItem,
         deliveryData,
         setDeliveryData,
@@ -128,4 +149,3 @@ export function CartProvider({ children }) {
     </CartContext.Provider>
   )
 }
-

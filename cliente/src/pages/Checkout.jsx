@@ -91,6 +91,22 @@ export default function Checkout() {
                 placeholder="Apartamento, bloco ou referência"
               />
             </Field>
+            <Field label="Cidade">
+              <input
+                name="cidade"
+                value={deliveryData.cidade}
+                onChange={handleDeliveryChange}
+                placeholder="Sua cidade"
+              />
+            </Field>
+            <Field label="Bairro">
+              <input
+                name="bairro"
+                value={deliveryData.bairro}
+                onChange={handleDeliveryChange}
+                placeholder="Seu bairro"
+              />
+            </Field>
             <Field label="Data de entrega">
               <input
                 name="dataEntrega"

@@ -74,37 +74,6 @@ export function Layout({ children }) {
       </header>
 
       <main>{children}</main>
-
-      <footer className="site-footer">
-        <div className="container footer-grid">
-          <div>
-            <Link className="brand footer-brand" to="/">
-              <span className="brand-mark">M</span>
-              <span>
-                <strong>MuttiFlow</strong>
-              </span>
-            </Link>
-            <p>Uma experiência de pedidos elegante, rápida e conectada ao painel administrativo.</p>
-          </div>
-          <div>
-            <h3>Navegação</h3>
-            <a href="/cardapio">Cardápio</a>
-            <a href="/checkout">Checkout</a>
-            <a href="/historia">História</a>
-          </div>
-          <div>
-            <h3>Contato</h3>
-            <a href="https://wa.me/5500000000000"><FiPhone /> WhatsApp</a>
-            <a href="https://instagram.com"><FiInstagram /> Instagram</a>
-            <a href="https://facebook.com"><FiFacebook /> Facebook</a>
-          </div>
-          <div>
-            <h3>Endereço</h3>
-            <p><FiMapPin /> Rua das Oliveiras, 128 - Centro</p>
-            <p>Terça a domingo, 10h às 22h</p>
-          </div>
-        </div>
-      </footer>
     </div>
   )
 }

@@ -935,6 +935,19 @@ td {
   margin: 0;
 }
 
+.form-message {
+  margin: 0;
+  font-weight: 700;
+}
+
+.form-message.success {
+  color: #237a4b;
+}
+
+.form-message.error {
+  color: #b42318;
+}
+
 .cart-line {
   padding: 18px;
   border-bottom: 1px solid var(--line);
