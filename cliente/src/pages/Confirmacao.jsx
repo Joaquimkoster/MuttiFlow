@@ -22,9 +22,10 @@ export default function Confirmacao() {
 
     const pedido = await submitOrder();
 
-    navigate('/pedido-finalizado', {
+    navigate(`/pagamento-pix/${pedido.id}`, {
       state: {
         pedidoId: pedido.id,
+        total: Number(pedido.total),
       },
     });
   } catch (error) {
@@ -37,16 +38,22 @@ export default function Confirmacao() {
     return <p>Carregando dados do pedido...</p>
   }
 
-  if (items.length === 0) {
+  if (items.length === 0 && !submitting) {
     return <Navigate to="/cardapio" replace />
+  }
+
+  const camposObrigatorios = ['nome', 'whatsapp', 'endereco', 'cidade', 'bairro', 'dataEntrega', 'horario']
+  if (camposObrigatorios.some((campo) => !String(deliveryData[campo] || '').trim())) {
+    return <Navigate to="/checkout" replace />
   }
 
   return (
     <section className="container checkout-layout">
       <div>
         <SectionHeader
-          title="Confira os dados antes de enviar"
-          text="Uma última revisão clara reduz erros e aumenta confiança no pedido."
+          eyebrow="Última etapa"
+          title="Revise seu pedido"
+          text="Confira os itens e os dados de entrega antes de confirmar."
         />
         <div className="surface confirmation-card">
           <h2>Dados do cliente</h2>
@@ -54,7 +61,7 @@ export default function Confirmacao() {
             <div><dt>Nome</dt><dd>{deliveryData.nome || 'Não informado'}</dd></div>
             <div><dt>WhatsApp</dt><dd>{deliveryData.whatsapp || 'Não informado'}</dd></div>
             <div><dt>Email</dt><dd>{deliveryData.email || 'Não informado'}</dd></div>
-            <div><dt>Pagamento</dt><dd>{deliveryData.pagamento || 'Não informado'}</dd></div>
+            <div><dt>Pagamento</dt><dd>Pix</dd></div>
             <div><dt>Endereço</dt><dd>{deliveryData.endereco || 'Não informado'}</dd></div>
             <div><dt>Complemento</dt><dd>{deliveryData.complemento || 'Não informado'}</dd></div>
             <div><dt>Cidade</dt><dd>{deliveryData.cidade || 'Não informada'}</dd></div>
@@ -74,7 +81,7 @@ export default function Confirmacao() {
       <OrderSummary
         items={items}
         coupon={couponDiscount}
-        cta="Confirmar Pedido"
+        cta="Confirmar e pagar com Pix"
         onAction={handleSubmit}
         disabled={submitting}
       />

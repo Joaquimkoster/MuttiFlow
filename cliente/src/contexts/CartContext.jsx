@@ -32,7 +32,7 @@ export function CartProvider({ children }) {
     nome: '',
     whatsapp: '',
     email: '',
-    pagamento: '',
+    pagamento: 'Pix',
     endereco: '',
     complemento: '',
     cidade: '',

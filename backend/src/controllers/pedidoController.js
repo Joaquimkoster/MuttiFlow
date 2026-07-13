@@ -1,6 +1,17 @@
 const Pedido = require('../models/Pedido');
+const { gerarPixCopiaECola } = require('../utils/pix');
 
 const statusPermitidos = ['Agendado', 'Confirmado', 'Preparando', 'Pronto', 'Saiu para entrega', 'Entregue', 'Cancelado'];
+const pagamentosPermitidos = ['Pix'];
+const horariosPermitidos = ['11:00 - 12:00', '12:00 - 13:00', '19:00 - 20:00'];
+
+function dataEntregaValida(valor) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(valor || ''))) return false;
+  const data = new Date(`${valor}T12:00:00`);
+  const hoje = new Date();
+  hoje.setHours(0, 0, 0, 0);
+  return !Number.isNaN(data.getTime()) && data >= hoje;
+}
 
 async function listar(req, res) {
   try {
@@ -41,6 +52,18 @@ async function criar(req, res) {
     return res.status(400).json({
       erro: `Preencha os campos: ${ausentes.join(', ')}`,
     });
+  }
+
+  if (!pagamentosPermitidos.includes(dados.pagamento)) {
+    return res.status(400).json({ erro: 'Forma de pagamento inválida' });
+  }
+
+  if (!dataEntregaValida(dados.dataEntrega)) {
+    return res.status(400).json({ erro: 'Informe uma data de entrega válida' });
+  }
+
+  if (!horariosPermitidos.includes(dados.horario)) {
+    return res.status(400).json({ erro: 'Horário de entrega inválido' });
   }
 
   try {
@@ -96,4 +119,44 @@ async function atualizarPagamento(req, res) {
   }
 }
 
-module.exports = { criar, listar, atualizarStatus, atualizarPagamento, excluir };
+async function buscarPix(req, res) {
+  const sessaoId = req.headers['x-session-id'];
+  if (!sessaoId) return res.status(400).json({ erro: 'Sessão não informada' });
+  if (!/^\d+$/.test(String(req.params.id))) {
+    return res.status(400).json({ erro: 'Pedido inválido' });
+  }
+
+  try {
+    const pedido = await Pedido.buscarPix(req.params.id, sessaoId);
+    if (!pedido) return res.status(404).json({ erro: 'Pedido não encontrado' });
+
+    const chave = String(process.env.PIX_KEY || '').trim();
+    if (!chave) {
+      return res.status(503).json({ erro: 'O Pix ainda não foi configurado pela loja.' });
+    }
+
+    const beneficiario = process.env.PIX_RECEIVER_NAME || 'MuttiFlow';
+    const cidade = process.env.PIX_RECEIVER_CITY || 'Sao Paulo';
+    const codigo = gerarPixCopiaECola({
+      chave,
+      valor: pedido.total,
+      pedidoId: pedido.id,
+      beneficiario,
+      cidade,
+    });
+
+    return res.json({
+      pedidoId: pedido.id,
+      valor: Number(pedido.total),
+      chave,
+      codigo,
+      beneficiario,
+      status: pedido.pagamento_status,
+    });
+  } catch (error) {
+    console.error('Erro ao gerar Pix:', error);
+    return res.status(500).json({ erro: 'Não foi possível gerar o pagamento Pix.' });
+  }
+}
+
+module.exports = { criar, listar, atualizarStatus, atualizarPagamento, buscarPix, excluir };

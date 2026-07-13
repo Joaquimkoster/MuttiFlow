@@ -5,8 +5,9 @@ export default function Contato() {
   return (
     <section className="container contact-page section-block">
       <SectionHeader
-        title="Canais oficiais"
-        text="Atendimento por WhatsApp, redes sociais, endereço e horário de funcionamento."
+        eyebrow="Fale com a gente"
+        title="Estamos por perto"
+        text="Tire dúvidas, acompanhe seu pedido ou venha conhecer mais do nosso trabalho."
       />
 
       <div className="contact-grid">

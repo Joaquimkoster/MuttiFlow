@@ -7,6 +7,7 @@ import Carrinho from './pages/Carrinho'
 import Checkout from './pages/Checkout'
 import Confirmacao from './pages/Confirmacao'
 import PedidoFinalizado from './pages/PedidoFinalizado'
+import PagamentoPix from './pages/PagamentoPix'
 import Contato from './pages/Contato'
 import Historia from './pages/Historia'
 import Eventos from './pages/Eventos'
@@ -25,6 +26,7 @@ function App() {
             <Route path="/carrinho" element={<Carrinho />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/confirmacao" element={<Confirmacao />} />
+            <Route path="/pagamento-pix/:pedidoId" element={<PagamentoPix />} />
             <Route path="/pedido-finalizado" element={<PedidoFinalizado />} />
             <Route path="/obrigado" element={<PedidoFinalizado />} />
             <Route path="/contato" element={<Contato />} />

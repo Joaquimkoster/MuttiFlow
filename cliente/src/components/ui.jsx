@@ -3,7 +3,6 @@ import {
   FiChevronRight,
   FiMinus,
   FiPlus,
-  FiShoppingBag,
   FiStar,
   FiTrash2,
 } from 'react-icons/fi'
@@ -63,9 +62,12 @@ export function ProductCard({ product, compact = false }) {
           <span>{product.serves}</span>
         </div>
         <div className="product-footer">
-          <strong className="price">{formatCurrency(product.price)}</strong>
+          <div className="price-group">
+            {product.oldPrice && <span>{formatCurrency(product.oldPrice)}</span>}
+            <strong className="price">{formatCurrency(product.price)}</strong>
+          </div>
           <Link className="button primary small" to={`/produto/${product.id}`}>
-            <FiShoppingBag /> Pedir
+            Ver prato <FiChevronRight />
           </Link>
         </div>
       </div>
@@ -202,7 +204,6 @@ export function DesignSystemShowcase() {
             <select defaultValue="">
               <option value="" disabled>Forma de pagamento</option>
               <option>Pix</option>
-              <option>Cartão</option>
             </select>
           </div>
         </div>

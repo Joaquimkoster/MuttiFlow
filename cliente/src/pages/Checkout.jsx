@@ -1,8 +1,12 @@
-import { Navigate } from 'react-router-dom'
+import { useRef, useState } from 'react'
+import { Navigate, useNavigate } from 'react-router-dom'
 import { Field, OrderSummary, SectionHeader } from '../components/ui'
 import { useCart } from '../hooks/useCart'
 
 export default function Checkout() {
+  const navigate = useNavigate()
+  const formRef = useRef(null)
+  const [formError, setFormError] = useState('')
   const {
     couponDiscount,
     deliveryData,
@@ -20,6 +24,16 @@ export default function Checkout() {
     }))
   }
 
+  function reviewOrder() {
+    if (!formRef.current?.reportValidity()) {
+      setFormError('Preencha os campos obrigatórios antes de continuar.')
+      return
+    }
+
+    setFormError('')
+    navigate('/confirmacao')
+  }
+
   if (isLoading) {
     return <p>Carregando dados dos pedidos...</p>
   }
@@ -33,10 +47,11 @@ export default function Checkout() {
     <section className="container checkout-layout">
       <div>
         <SectionHeader
+          eyebrow="Quase lá"
           title="Dados para entrega"
-          text="Formulário objetivo, estados consistentes e resumo fixo em telas maiores."
+          text="Conte onde e quando devemos entregar. Seus dados serão usados somente para este pedido."
         />
-        <form className="surface checkout-form">
+        <form ref={formRef} className="surface checkout-form" onSubmit={(event) => { event.preventDefault(); reviewOrder() }}>
           <div className="form-grid">
             <Field label="Nome">
               <input
@@ -44,6 +59,7 @@ export default function Checkout() {
                 value={deliveryData.nome}
                 onChange={handleDeliveryChange}
                 placeholder="Seu nome completo"
+                required
               />
             </Field>
             <Field label="WhatsApp">
@@ -52,6 +68,7 @@ export default function Checkout() {
                 value={deliveryData.whatsapp}
                 onChange={handleDeliveryChange}
                 placeholder="(00) 00000-0000"
+                required
               />
             </Field>
             <Field label="Email">
@@ -60,20 +77,16 @@ export default function Checkout() {
                 type="email"
                 value={deliveryData.email}
                 onChange={handleDeliveryChange}
+                required
                 placeholder="voce@email.com"
               />
             </Field>
             <Field label="Forma de pagamento">
-              <select
+              <input
                 name="pagamento"
-                value={deliveryData.pagamento}
-                onChange={handleDeliveryChange}
-              >
-                <option value="" disabled>Selecione</option>
-                <option value="Pix">Pix</option>
-                <option value="Cartão na entrega">Cartão na entrega</option>
-                <option value="Dinheiro">Dinheiro</option>
-              </select>
+                value="Pix"
+                readOnly
+              />
             </Field>
             <Field label="Endereço completo">
               <input
@@ -81,6 +94,7 @@ export default function Checkout() {
                 value={deliveryData.endereco}
                 onChange={handleDeliveryChange}
                 placeholder="Rua, número, bairro, cidade"
+                required
               />
             </Field>
             <Field label="Complemento">
@@ -97,6 +111,7 @@ export default function Checkout() {
                 value={deliveryData.cidade}
                 onChange={handleDeliveryChange}
                 placeholder="Sua cidade"
+                required
               />
             </Field>
             <Field label="Bairro">
@@ -105,14 +120,17 @@ export default function Checkout() {
                 value={deliveryData.bairro}
                 onChange={handleDeliveryChange}
                 placeholder="Seu bairro"
+                required
               />
             </Field>
             <Field label="Data de entrega">
               <input
                 name="dataEntrega"
                 type="date"
+                min={new Date().toISOString().slice(0, 10)}
                 value={deliveryData.dataEntrega}
                 onChange={handleDeliveryChange}
+                required
               />
             </Field>
             <Field label="Horário">
@@ -120,6 +138,7 @@ export default function Checkout() {
                 name="horario"
                 value={deliveryData.horario}
                 onChange={handleDeliveryChange}
+                required
               >
                 <option value="" disabled>Escolha</option>
                 <option value="11:00 - 12:00">11:00 - 12:00</option>
@@ -136,9 +155,10 @@ export default function Checkout() {
               placeholder="Ex: sem cebola, entregar na portaria..."
             />
           </Field>
+          {formError && <p className="form-error">{formError}</p>}
         </form>
       </div>
-      <OrderSummary items={items} coupon={couponDiscount} cta="Revisar pedido" to="/confirmacao" />
+      <OrderSummary items={items} coupon={couponDiscount} cta="Revisar pedido" onAction={reviewOrder} />
     </section>
   )
 }

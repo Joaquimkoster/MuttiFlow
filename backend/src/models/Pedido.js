@@ -91,7 +91,7 @@ async function listar() {
 
 async function atualizarStatus(id, status) {
   const result = await pool.query(
-    'UPDATE pedidos SET status = $1 WHERE id = $2 RETURNING *',
+    'UPDATE pedidos SET status = $1, atualizado_em = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *',
     [status, id]
   );
   return result.rows[0];
@@ -104,10 +104,20 @@ async function excluir(id) {
 
 async function atualizarPagamento(id, pagamentoStatus) {
   const result = await pool.query(
-    'UPDATE pedidos SET pagamento_status = $1 WHERE id = $2 RETURNING *',
+    'UPDATE pedidos SET pagamento_status = $1, atualizado_em = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *',
     [pagamentoStatus, id]
   );
   return result.rows[0];
 }
 
-module.exports = { criar, listar, atualizarStatus, atualizarPagamento, excluir };
+async function buscarPix(id, sessaoId) {
+  const result = await pool.query(
+    `SELECT id, cliente_nome, total, forma_pagamento, pagamento_status
+     FROM pedidos
+     WHERE id = $1 AND sessao_id = $2`,
+    [id, sessaoId]
+  );
+  return result.rows[0];
+}
+
+module.exports = { criar, listar, atualizarStatus, atualizarPagamento, buscarPix, excluir };

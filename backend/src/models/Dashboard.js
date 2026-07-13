@@ -1,7 +1,7 @@
 const { pool } = require('../config/database');
 
 async function buscar() {
-  const [resumo, produtos, regioes, proximosEventos, clientesInativos, faturamentoDia, pedidosSemana] = await Promise.all([
+  const [resumo, produtos, regioes, proximosEventos, clientesInativos, faturamentoDia, pedidosSemana, pedidosRecentes] = await Promise.all([
     pool.query(`
       WITH clientes AS (
         SELECT COALESCE(NULLIF(LOWER(email), ''), whatsapp) chave,
@@ -14,6 +14,13 @@ async function buscar() {
         COALESCE(SUM(total) FILTER (WHERE criado_em >= date_trunc('month', CURRENT_DATE) AND status <> 'Cancelado'), 0) faturamento_mes,
         COUNT(*) FILTER (WHERE pagamento_status = 'Pago') pagos,
         COUNT(*) FILTER (WHERE pagamento_status = 'Pendente') pendentes,
+        COUNT(*) FILTER (WHERE status = 'Agendado') pedidos_agendados,
+        COUNT(*) FILTER (WHERE status = 'Confirmado') pedidos_confirmados,
+        COUNT(*) FILTER (WHERE status = 'Preparando') pedidos_preparando,
+        COUNT(*) FILTER (WHERE status = 'Pronto') pedidos_prontos,
+        COUNT(*) FILTER (WHERE status = 'Saiu para entrega') pedidos_em_entrega,
+        COUNT(*) FILTER (WHERE status = 'Entregue') pedidos_entregues,
+        COUNT(*) FILTER (WHERE status = 'Cancelado') pedidos_cancelados,
         COUNT(*) FILTER (WHERE data_entrega = CURRENT_DATE AND status NOT IN ('Entregue','Cancelado')) entregas_hoje,
         COUNT(*) FILTER (WHERE data_entrega < CURRENT_DATE AND status NOT IN ('Entregue','Cancelado')) entregas_atrasadas,
         (SELECT COUNT(*) FROM clientes WHERE primeiro >= date_trunc('month', CURRENT_DATE)) novos_clientes,
@@ -59,6 +66,12 @@ async function buscar() {
       LEFT JOIN pedidos p ON date_trunc('week', p.criado_em) = serie.semana AND p.status <> 'Cancelado'
       GROUP BY serie.semana ORDER BY serie.semana
     `),
+    pool.query(`
+      SELECT id, cliente_nome, total, pagamento_status, data_entrega, horario, status, atualizado_em
+      FROM pedidos
+      ORDER BY atualizado_em DESC, id DESC
+      LIMIT 10
+    `),
   ]);
 
   const ranking = produtos.rows;
@@ -73,6 +86,7 @@ async function buscar() {
     clientesInativos: clientesInativos.rows,
     faturamentoDia: faturamentoDia.rows,
     pedidosSemana: pedidosSemana.rows,
+    pedidosRecentes: pedidosRecentes.rows,
   };
 }
 

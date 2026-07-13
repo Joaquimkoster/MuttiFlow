@@ -9,6 +9,8 @@ export default function Pedidos() {
   const [status, setStatus] = useState("");
   const [pedidos, setPedidos] = useState([]);
   const [erro, setErro] = useState("");
+  const [sucesso, setSucesso] = useState("");
+  const [salvando, setSalvando] = useState({});
   const [carregando, setCarregando] = useState(true);
 
   async function carregarPedidos() {
@@ -38,12 +40,19 @@ export default function Pedidos() {
 
   async function alterarStatus(pedido, novoStatus) {
     const anterior = pedido.status;
+    setErro("");
+    setSucesso("");
+    setSalvando((atuais) => ({ ...atuais, [`status-${pedido.id}`]: true }));
     setPedidos((atuais) => atuais.map((item) => item.id === pedido.id ? { ...item, status: novoStatus } : item));
     try {
-      await api.patch(`/pedidos/${pedido.id}/status`, { status: novoStatus });
+      const { data } = await api.patch(`/pedidos/${pedido.id}/status`, { status: novoStatus });
+      setPedidos((atuais) => atuais.map((item) => item.id === pedido.id ? { ...item, ...data, produtos: item.produtos } : item));
+      setSucesso(`Pedido de ${pedido.cliente_nome} atualizado para “${novoStatus}”.`);
     } catch (error) {
       setPedidos((atuais) => atuais.map((item) => item.id === pedido.id ? { ...item, status: anterior } : item));
       setErro(error.response?.data?.erro || "Não foi possível alterar o status.");
+    } finally {
+      setSalvando((atuais) => ({ ...atuais, [`status-${pedido.id}`]: false }));
     }
   }
 
@@ -59,18 +68,26 @@ export default function Pedidos() {
 
   async function alterarPagamento(pedido, pagamentoStatus) {
     const anterior = pedido.pagamento_status;
+    setErro("");
+    setSucesso("");
+    setSalvando((atuais) => ({ ...atuais, [`pagamento-${pedido.id}`]: true }));
     setPedidos((atuais) => atuais.map((item) => item.id === pedido.id ? { ...item, pagamento_status: pagamentoStatus } : item));
     try {
-      await api.patch(`/pedidos/${pedido.id}/pagamento`, { pagamento_status: pagamentoStatus });
+      const { data } = await api.patch(`/pedidos/${pedido.id}/pagamento`, { pagamento_status: pagamentoStatus });
+      setPedidos((atuais) => atuais.map((item) => item.id === pedido.id ? { ...item, ...data, produtos: item.produtos } : item));
+      setSucesso(`Pagamento do pedido de ${pedido.cliente_nome} atualizado para “${pagamentoStatus}”.`);
     } catch (error) {
       setPedidos((atuais) => atuais.map((item) => item.id === pedido.id ? { ...item, pagamento_status: anterior } : item));
       setErro(error.response?.data?.erro || "Não foi possível alterar o pagamento.");
+    } finally {
+      setSalvando((atuais) => ({ ...atuais, [`pagamento-${pedido.id}`]: false }));
     }
   }
 
   return (
     <AppLayout title="Pedidos" action={<button type="button" className="button" onClick={carregarPedidos}>Atualizar</button>}>
       {erro && <p className="message message-error" role="alert">{erro}</p>}
+      {sucesso && <p className="message message-success" role="status">{sucesso}</p>}
       <div className="filters">
         <input className="input" type="search" placeholder="Pesquisar cliente ou produto..." value={pesquisa} onChange={(event) => setPesquisa(event.target.value)} />
         <select className="select" value={status} onChange={(event) => setStatus(event.target.value)}>
@@ -88,10 +105,10 @@ export default function Pedidos() {
                 <td><div className="table-primary">{pedido.cliente_nome}</div><div className="table-secondary">{pedido.whatsapp}</div>{pedido.email && <div className="table-secondary">{pedido.email}</div>}</td>
                 <td>{pedido.produtos}</td>
                 <td>{Number(pedido.total).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</td>
-                <td><div className="table-secondary">{pedido.forma_pagamento}</div><select className="select status-select" value={pedido.pagamento_status || "Pendente"} onChange={(event) => alterarPagamento(pedido, event.target.value)}><option>Pendente</option><option>Pago</option></select></td>
+                <td><div className="table-secondary">Pix</div><select className="select status-select" value={pedido.pagamento_status || "Pendente"} disabled={salvando[`pagamento-${pedido.id}`]} onChange={(event) => alterarPagamento(pedido, event.target.value)}><option>Pendente</option><option>Pago</option></select></td>
                 <td><div className="table-primary">{new Date(`${pedido.data_entrega.slice(0, 10)}T12:00:00`).toLocaleDateString("pt-BR")}</div><div className="table-secondary">{pedido.horario}</div></td>
                 <td><div className="delivery-address">{pedido.endereco}</div>{pedido.complemento && <div className="table-secondary">{pedido.complemento}</div>}<div className="table-secondary">{[pedido.bairro, pedido.cidade].filter(Boolean).join(" - ") || "Bairro e cidade não informados"}</div></td>
-                <td><select className="select status-select" value={pedido.status} onChange={(event) => alterarStatus(pedido, event.target.value)}>{statuses.map((nome) => <option key={nome}>{nome}</option>)}</select></td>
+                <td><select className="select status-select" value={pedido.status} disabled={salvando[`status-${pedido.id}`]} onChange={(event) => alterarStatus(pedido, event.target.value)}>{statuses.map((nome) => <option key={nome}>{nome}</option>)}</select>{salvando[`status-${pedido.id}`] && <div className="table-secondary">Salvando...</div>}</td>
                 <td><button type="button" className="button button-small button-danger" onClick={() => excluir(pedido)}>Excluir</button></td>
               </tr>
             ))}

@@ -66,8 +66,9 @@ export default function Carrinho() {
     <section className="container checkout-layout">
       <div>
         <SectionHeader
-          title="Revise seus produtos"
-          text="Ajuste quantidades, remova itens e aplique um cupom antes de continuar."
+          eyebrow="Seu pedido"
+          title="Carrinho"
+          text="Confira os pratos escolhidos e ajuste as quantidades antes de continuar."
           action={
             items.length > 0 && (
               <button className="button secondary small" type="button" onClick={handleClearCart} disabled={isUpdating}>

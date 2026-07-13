@@ -3,7 +3,7 @@
 MuttiFlow é um projeto full-stack para uma experiência de pedidos de comida, com API em Node.js/Express, banco PostgreSQL e duas interfaces React:
 
 - `cliente/`: vitrine pública, cardápio, produto, carrinho e checkout visual.
-- `frontend/`: painel administrativo com login, dashboard, pedidos, eventos, estoque e planilha.
+- `frontend/`: painel administrativo com login, dashboard, pedidos, eventos e custos de receitas.
 - `backend/`: API REST, autenticação, carrinho e conexão com PostgreSQL.
 
 ## Estado Atual
@@ -18,8 +18,16 @@ Funcional no backend:
 - `PATCH /carrinho/itens/:id`
 - `DELETE /carrinho/itens/:id`
 - `DELETE /carrinho`
-
-Importante: existem arquivos de rotas, controllers, models e services para produtos, pedidos, pagamentos, clientes, estoque, eventos e dashboard, mas hoje o `backend/src/app.js` registra apenas `auth` e `carrinho`. Para ativar os outros módulos, ainda é preciso importar e registrar essas rotas no `app.js` e garantir que os models/controllers estejam completos.
+- `POST /pedidos`
+- `GET /pedidos` (autenticado)
+- `PATCH /pedidos/:id/status` (autenticado)
+- `PATCH /pedidos/:id/pagamento` (autenticado)
+- `DELETE /pedidos/:id` (autenticado)
+- `POST /eventos`
+- `GET /eventos` (autenticado)
+- `PATCH /eventos/:id/status` (autenticado)
+- `DELETE /eventos/:id` (autenticado)
+- `GET /dashboard` (autenticado)
 
 ## Tecnologias
 
@@ -122,6 +130,7 @@ DB_PORT=5432
 DB_USER=postgres
 DB_PASSWORD=8846
 DB_NAME=muttiflow
+DB_CONNECTION_TIMEOUT_MS=5000
 JWT_SECRET=muttiflow-secret
 ```
 
@@ -132,6 +141,7 @@ Valores padrão usados pelo código se o `.env` não tiver alguma variável:
 - `DB_USER`: `postgres`
 - `DB_PASSWORD`: `8846`
 - `DB_NAME`: `muttiflow`
+- `DB_CONNECTION_TIMEOUT_MS`: `5000`
 - `PORT`: `3000`
 - `JWT_SECRET`: `muttiflow-secret`
 
@@ -145,7 +155,7 @@ sudo -u postgres createdb muttiflow
 
 Se o banco já existir, esse comando pode avisar erro de banco duplicado. Nesse caso, siga para o próximo passo.
 
-Rode o SQL do carrinho:
+O backend aplica o schema automaticamente antes de começar a escutar a porta. Para aplicar manualmente:
 
 ```bash
 cd backend
@@ -161,12 +171,14 @@ PGPASSWORD=8846 psql -h 127.0.0.1 -U postgres -d muttiflow -f src/database/init.
 
 O arquivo `backend/src/database/init.sql` cria:
 
+- `categorias`
+- `produtos` e os seis produtos iniciais
+- `usuarios`
 - `carrinhos`
 - `carrinho_itens`
-
-A tabela `usuarios` é criada automaticamente quando o backend inicia, via `initializeDatabase()` em `backend/src/config/database.js`.
-
-Importante: `carrinho_itens` depende da tabela `produtos`, porque possui foreign key para `produtos(id)`. Então a tabela `produtos` precisa existir antes de usar o carrinho.
+- `pedidos`
+- `pedido_itens`
+- `eventos`
 
 ## Rodando O Projeto
 
@@ -258,6 +270,9 @@ Rotas registradas atualmente:
 app.get('/health', ...)
 app.use('/auth', authRoutes)
 app.use('/carrinho', carrinhoRoutes)
+app.use('/pedidos', pedidoRoutes)
+app.use('/eventos', eventoRoutes)
+app.use('/dashboard', dashboardRoutes)
 ```
 
 Também existe um arquivo de compatibilidade:
@@ -309,7 +324,7 @@ Body:
 
 ```json
 {
-  "email": "joaquim@email.com",
+  "nome": "Joaquim",
   "senha": "123456"
 }
 ```
@@ -327,7 +342,27 @@ Resposta de sucesso:
 }
 ```
 
-O token JWT expira em `8h`.
+O token JWT expira em `30d` por padrão e a sessão fica salva no `localStorage`,
+continuando ativa após fechar o navegador ou desligar o computador. Esse período
+pode ser alterado pela variável `JWT_EXPIRES_IN` do backend.
+
+## Pagamento Pix
+
+Pix é a única forma de pagamento aceita. Depois de confirmar o pedido, o cliente
+é direcionado para `/pagamento-pix/:pedidoId`, onde recebe o valor, a chave e o
+código Pix Copia e Cola gerado pelo backend.
+
+Configure no `backend/.env`:
+
+```env
+PIX_KEY=sua-chave-pix
+PIX_RECEIVER_NAME=MuttiFlow
+PIX_RECEIVER_CITY=Sao Paulo
+```
+
+O endpoint público `GET /pedidos/:id/pix` exige o mesmo identificador de sessão
+usado para criar o pedido. A confirmação do recebimento é feita no painel,
+alterando o pagamento de `Pendente` para `Pago`.
 
 ## Carrinho
 
@@ -519,8 +554,7 @@ Rotas:
 - `/dashboard`: protegida
 - `/pedidos`: protegida
 - `/eventos`: protegida
-- `/estoque`: protegida
-- `/planilha`: protegida
+- `/custos-receitas`: protegida
 
 Arquivos importantes:
 
@@ -531,6 +565,15 @@ Arquivos importantes:
 - `frontend/src/pages/Dashboard.jsx`
 
 ## Scripts
+
+Na raiz do projeto:
+
+```bash
+npm run dev:backend
+npm run dev:cliente
+npm run dev:admin
+npm run check
+```
 
 Backend:
 
@@ -627,10 +670,11 @@ PGPASSWORD=8846 psql -h 127.0.0.1 -U postgres -d muttiflow
 
 ### `relation "produtos" does not exist`
 
-O carrinho depende da tabela `produtos`. Crie/popule `produtos` antes de usar:
+Reinicie o backend para que `initializeDatabase()` aplique o schema completo. Manualmente:
 
-```text
-carrinho_itens.produto_id -> produtos.id
+```bash
+cd backend
+PGPASSWORD=sua-senha psql -h 127.0.0.1 -U postgres -d muttiflow -f src/database/init.sql
 ```
 
 ### `Produto não encontrado`
@@ -659,13 +703,9 @@ E se `VITE_API_URL` aponta para essa URL.
 
 ## Próximos Passos Recomendados
 
-- Criar migrations completas para `usuarios`, `categorias`, `produtos`, `carrinhos` e `carrinho_itens`.
 - Conectar o cardápio público ao backend em vez de depender de `cliente/src/data/menuData.js`.
-- Validar cupom no backend, não apenas no frontend.
-- Transformar carrinho em pedido no checkout.
-- Registrar as rotas de produtos, pedidos, pagamentos, clientes, eventos, estoque e dashboard no `app.js` quando estiverem completas.
 - Adicionar testes automatizados para autenticação e carrinho.
-- Criar `.env.example` completo para backend, cliente e frontend.
+- Criar uma área administrativa para gerenciar os produtos do cardápio.
 
 ## Observações De Segurança
 

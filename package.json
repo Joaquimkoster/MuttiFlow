@@ -1,0 +1,11 @@
+{
+  "name": "muttiflow",
+  "private": true,
+  "scripts": {
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:cliente": "npm --prefix cliente run dev",
+    "dev:admin": "npm --prefix frontend run dev",
+    "check": "npm --prefix frontend run lint && npm --prefix frontend run build && npm --prefix cliente run lint && npm --prefix cliente run build && npm --prefix backend run check",
+    "install:all": "npm --prefix backend install && npm --prefix cliente install && npm --prefix frontend install"
+  }
+}

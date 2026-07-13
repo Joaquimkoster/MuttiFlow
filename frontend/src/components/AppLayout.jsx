@@ -1,19 +1,28 @@
 import { useLocation, useNavigate } from "react-router-dom";
 
 const menuItems = [
-  { label: "Dashboard", path: "/dashboard" },
-  { label: "Pedidos", path: "/pedidos" },
-  { label: "Eventos", path: "/eventos" },
-  { label: "Estoque", path: "/estoque" },
-  { label: "Relatórios", path: "/planilha" },
+  { label: "Dashboard", path: "/dashboard", icon: "dashboard" },
+  { label: "Pedidos", path: "/pedidos", icon: "orders" },
+  { label: "Eventos", path: "/eventos", icon: "calendar" },
+  { label: "Custos e receitas", path: "/custos-receitas", icon: "calculator" },
 ];
+
+const icons = {
+  dashboard: <><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></>,
+  orders: <><path d="M6 3h12l2 4-2 4H6L4 7l2-4Z"/><path d="M6 11v10h12V11M9 15h6"/></>,
+  calendar: <><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></>,
+  calculator: <><rect x="4" y="2" width="16" height="20" rx="3"/><path d="M8 6h8v4H8zM8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/></>,
+};
+
+function Icon({ name }) {
+  return <svg className="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{icons[name]}</svg>;
+}
 
 const pageDescriptions = {
   Dashboard: "Visão geral da operação",
   Pedidos: "Acompanhe produção e entregas",
   Eventos: "Solicitações e agenda de eventos",
-  Estoque: "Controle de insumos e embalagens",
-  Relatórios: "Dados consolidados e exportação",
+  "Custos e receitas": "Calcule ingredientes, rendimento, preço e margem",
 };
 
 export default function AppLayout({ title, action, children }) {
@@ -40,9 +49,10 @@ export default function AppLayout({ title, action, children }) {
       <aside className="app-sidebar">
         <div className="app-brand">
           <span className="brand-mark">M</span>
-          <div><h2 className="app-logo">MuttiFlow</h2><span>Painel de gestão</span></div>
+          <div><h2 className="app-logo">MuttiFlow</h2><span>Gestão inteligente</span></div>
         </div>
 
+        <span className="nav-section-label">Menu principal</span>
         <nav className="app-nav">
           {menuItems.map((item) => (
             <button
@@ -53,7 +63,7 @@ export default function AppLayout({ title, action, children }) {
                 location.pathname === item.path ? "is-active" : ""
               }`}
             >
-              <span className="nav-indicator" aria-hidden="true" />
+              <Icon name={item.icon} />
               {item.label}
             </button>
           ))}
@@ -62,13 +72,15 @@ export default function AppLayout({ title, action, children }) {
         <div className="sidebar-account">
           <span className="account-avatar">{iniciais}</span>
           <span className="account-copy"><strong>{nomeUsuario}</strong><small>{usuario.email || "Equipe MuttiFlow"}</small></span>
-          <button type="button" onClick={handleLogout} className="logout-button" title="Sair" aria-label="Sair">&#8594;</button>
+          <button type="button" onClick={handleLogout} className="logout-button" title="Sair" aria-label="Sair">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3M15 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/></svg>
+          </button>
         </div>
       </aside>
 
       <main className="app-main">
         <header className="page-header">
-          <div><span className="page-eyebrow">MuttiFlow / {title}</span><h1>{title}</h1><p>{pageDescriptions[title]}</p></div>
+          <div><span className="page-eyebrow">Painel <b>/</b> {title}</span><h1>{title}</h1><p>{pageDescriptions[title]}</p></div>
           {action}
         </header>
 

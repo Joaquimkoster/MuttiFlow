@@ -13,13 +13,20 @@ const api = axios.create({
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('muttiflow_token');
   if (token) config.headers.Authorization = `Bearer ${token}`;
+  config.muttiflowRouteAtRequest = window.location.pathname;
   return config;
 });
 
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401 && !error.config?.url?.startsWith('/auth/')) {
+    const isUnauthorized = error.response?.status === 401;
+    const isAuthRequest = error.config?.url?.startsWith('/auth/');
+    const responseBelongsToCurrentPage =
+      !error.config?.muttiflowRouteAtRequest ||
+      error.config.muttiflowRouteAtRequest === window.location.pathname;
+
+    if (isUnauthorized && !isAuthRequest && responseBelongsToCurrentPage) {
       localStorage.removeItem('muttiflow_token');
       localStorage.removeItem('muttiflow_usuario');
       window.location.assign('/');

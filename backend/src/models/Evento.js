@@ -1,7 +1,14 @@
 const { pool } = require('../config/database');
 
 async function listar() {
-  const result = await pool.query('SELECT * FROM eventos ORDER BY data, horario, criado_em DESC');
+  const result = await pool.query(`
+    SELECT * FROM eventos
+    ORDER BY
+      CASE WHEN status = 'Aguardando' THEN 0 ELSE 1 END,
+      data,
+      horario,
+      criado_em DESC
+  `);
   return result.rows;
 }
 

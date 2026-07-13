@@ -6,11 +6,12 @@ export default function Sobre() {
       <section className="container story-grid section-block">
         <div>
           <SectionHeader
-            title="Da cozinha de família para um cardápio profissional"
-            text="O projeto nasceu para organizar pedidos, preservar receitas e oferecer uma jornada digital compatível com marcas premium."
+            eyebrow="Nossa história"
+            title="Da cozinha de família para a sua mesa"
+            text="A MuttiFlow nasceu do desejo de preservar receitas, criar encontros e transformar o cuidado da comida caseira em uma experiência completa."
           />
           <p className="body-copy">
-            Cada prato é pensado para chegar bonito, quente e fácil de compartilhar. O visual do cliente conversa com o painel administrativo, criando uma experiência única da operação até a mesa.
+            Cada prato é preparado para chegar bonito, saboroso e fácil de compartilhar. Do molho feito sem pressa à embalagem, cada escolha carrega o mesmo cuidado que teríamos ao servir nossa própria família.
           </p>
         </div>
         <div className="photo-mosaic">
@@ -22,7 +23,7 @@ export default function Sobre() {
 
       <section className="team-band">
         <div className="container section-block">
-          <SectionHeader title="Pessoas por trás da operação" />
+          <SectionHeader eyebrow="Nossa equipe" title="Pessoas por trás de cada pedido" />
           <div className="team-grid">
             {['Clara Mutti', 'André Souza', 'Lia Martins'].map((name) => (
               <article className="team-card" key={name}>

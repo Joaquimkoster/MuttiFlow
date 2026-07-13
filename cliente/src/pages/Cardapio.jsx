@@ -1,15 +1,11 @@
 import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { FiSearch, FiShoppingBag } from 'react-icons/fi'
+import { FiSearch } from 'react-icons/fi'
 import { categories, products } from '../data/menuData'
 import { CategoryChips, ProductCard, SectionHeader } from '../components/ui'
-import { useCart } from '../hooks/useCart'
 
 export default function Cardapio() {
   const [activeCategory, setActiveCategory] = useState('todos')
   const [search, setSearch] = useState('')
-  const { itemCount } = useCart()
-
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
       const categoryMatch = activeCategory === 'todos' || product.category === activeCategory
@@ -21,8 +17,9 @@ export default function Cardapio() {
   return (
     <section className="container menu-page">
       <SectionHeader
-        title="Escolha seus pratos"
-        text="Pesquisa, filtros por categoria, cards responsivos e carrinho sempre acessível."
+        eyebrow="Cardápio artesanal"
+        title="Escolha o que vai à mesa"
+        text="Pratos preparados em pequenos lotes, com ingredientes selecionados e porções pensadas para compartilhar."
       />
 
       <div className="menu-toolbar">
@@ -30,7 +27,7 @@ export default function Cardapio() {
           <FiSearch />
           <input
             type="search"
-            placeholder="Buscar produto"
+            placeholder="Buscar por prato..."
             value={search}
             onChange={(event) => setSearch(event.target.value)}
           />
@@ -42,10 +39,13 @@ export default function Cardapio() {
         {filteredProducts.map((product) => <ProductCard key={product.id} product={product} />)}
       </div>
 
-      <Link className="floating-cart" to="/carrinho" aria-label="Abrir carrinho">
-        <FiShoppingBag />
-        <span>{itemCount === 1 ? '1 item' : `${itemCount} itens`}</span>
-      </Link>
+      {filteredProducts.length === 0 && (
+        <div className="empty-results">
+          <strong>Nenhum prato encontrado</strong>
+          <p>Tente buscar outro nome ou escolher uma categoria diferente.</p>
+        </div>
+      )}
+
     </section>
   )
 }

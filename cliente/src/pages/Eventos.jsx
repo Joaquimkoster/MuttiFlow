@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { FiCalendar, FiCheckCircle, FiMessageCircle } from 'react-icons/fi'
 import { SectionHeader } from '../components/ui'
 import { createEvent } from '../services/eventApi'
 
@@ -20,7 +21,6 @@ export default function Eventos() {
     endereco: '',
     convidados: '',
     valor: '',
-    status: 'Aguardando',
   })
   const [submitting, setSubmitting] = useState(false)
   const [message, setMessage] = useState({ type: '', text: '' })
@@ -39,8 +39,8 @@ export default function Eventos() {
 
     try {
       await createEvent(form)
-      setMessage({ type: 'success', text: 'Solicitação enviada. Nossa equipe entrará em contato.' })
-      setForm({ cliente: '', tipo: '', data: '', hora: '', endereco: '', convidados: '', valor: '', status: 'Aguardando' })
+      setMessage({ type: 'success', text: 'Solicitação enviada para análise. Nossa equipe entrará em contato após aceitar o evento.' })
+      setForm({ cliente: '', tipo: '', data: '', hora: '', endereco: '', convidados: '', valor: '' })
     } catch (error) {
       setMessage({ type: 'error', text: error.message })
     } finally {
@@ -51,8 +51,9 @@ export default function Eventos() {
   return (
     <section className="container section-block">
       <SectionHeader
-        title="Agende seu evento"
-        text="Preencha as informações abaixo e nossa equipe entrará em contato para confirmar a disponibilidade."
+        eyebrow="Momentos especiais"
+        title="Leve a MuttiFlow para seu evento"
+        text="Conte um pouco sobre a ocasião. Nossa equipe prepara uma proposta personalizada e entra em contato para confirmar os detalhes."
       />
 
       <div className="event-page">
@@ -97,6 +98,7 @@ export default function Eventos() {
               <input
                 type="date"
                 name="data"
+                min={new Date().toISOString().slice(0, 10)}
                 value={form.data}
                 onChange={handleChange}
                 required
@@ -157,60 +159,30 @@ export default function Eventos() {
             </div>
           </div>
 
-          <div className="form-group">
-            <label>Status</label>
-
-            <input
-              value={form.status}
-              readOnly
-            />
-          </div>
-
           {message.text && <p className={`form-message ${message.type}`}>{message.text}</p>}
           <button className="btn-primary" disabled={submitting}>
             {submitting ? 'Enviando...' : 'Solicitar Evento'}
           </button>
         </form>
 
-        <aside className="surface summary-card">
-          <h3>Resumo do Evento</h3>
-
-          <ul className="summary-list">
-            <li>
-              <strong>Cliente</strong>
-              <span>{form.cliente || '-'}</span>
-            </li>
-
-            <li>
-              <strong>Tipo</strong>
-              <span>{form.tipo || '-'}</span>
-            </li>
-
-            <li>
-              <strong>Data</strong>
-              <span>{form.data ? new Date(form.data).toLocaleDateString('pt-BR') : '-'}</span>
-            </li>
-
-            <li>
-              <strong>Hora</strong>
-              <span>{form.hora || '-'}</span>
-            </li>
-
-            <li>
-              <strong>Endereço</strong>
-              <span>{form.endereco || '-'}</span>
-            </li>
-
-            <li>
-              <strong>Convidados</strong>
-              <span>{form.convidados || '-'}</span>
-            </li>
-
-            <li>
-              <strong>Valor estimado</strong>
-              <span>{form.valor ? `R$ ${form.valor}` : '-'}</span>
-            </li>
-          </ul>
+        <aside className="surface event-info-panel">
+          <span className="eyebrow">Como funciona</span>
+          <h2>Você envia os detalhes. A gente cuida do restante.</h2>
+          <div className="event-info-steps">
+            <div>
+              <FiMessageCircle />
+              <span><strong>Envie sua solicitação</strong><small>Conte a data, o local e o número de convidados.</small></span>
+            </div>
+            <div>
+              <FiCalendar />
+              <span><strong>Analisamos a disponibilidade</strong><small>Nossa equipe verifica a agenda e os detalhes do evento.</small></span>
+            </div>
+            <div>
+              <FiCheckCircle />
+              <span><strong>Confirmamos com você</strong><small>Após a aprovação, entramos em contato para combinar os próximos passos.</small></span>
+            </div>
+          </div>
+          <p>A solicitação não garante a reserva até a confirmação da nossa equipe.</p>
         </aside>
       </div>
     </section>

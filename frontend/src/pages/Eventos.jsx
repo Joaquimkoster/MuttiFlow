@@ -2,7 +2,16 @@ import { useEffect, useState } from "react";
 import AppLayout from "../components/AppLayout";
 import api from "../services/api";
 
-const statuses = ["Aguardando", "Agendado", "Confirmado", "Preparando", "Finalizado", "Cancelado"];
+const statuses = ["Aguardando", "Aceito", "Recusado", "Preparando", "Finalizado", "Cancelado"];
+
+const statusClass = {
+  Aguardando: "event-status-waiting",
+  Aceito: "event-status-accepted",
+  Recusado: "event-status-rejected",
+  Preparando: "event-status-progress",
+  Finalizado: "event-status-finished",
+  Cancelado: "event-status-rejected",
+};
 
 export default function Eventos() {
   const [eventos, setEventos] = useState([]);
@@ -77,8 +86,24 @@ export default function Eventos() {
                 <td>{new Date(`${evento.data.slice(0, 10)}T12:00:00`).toLocaleDateString("pt-BR")}</td>
                 <td>{evento.horario.slice(0, 5)}</td><td>{evento.endereco}</td><td>{evento.convidados}</td>
                 <td>{evento.valor == null ? "A definir" : Number(evento.valor).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</td>
-                <td><select className="select status-select" value={evento.status} onChange={(event) => alterarStatus(evento, event.target.value)}>{statuses.map((nome) => <option key={nome}>{nome}</option>)}</select></td>
-                <td><button type="button" className="button button-small button-danger" onClick={() => excluir(evento)}>Excluir</button></td>
+                <td>
+                  {evento.status === "Aguardando" ? (
+                    <span className={`event-status ${statusClass[evento.status]}`}>{evento.status}</span>
+                  ) : (
+                    <select className="select status-select" value={evento.status} onChange={(event) => alterarStatus(evento, event.target.value)}>{statuses.map((nome) => <option key={nome}>{nome}</option>)}</select>
+                  )}
+                </td>
+                <td>
+                  <div className="event-actions">
+                    {evento.status === "Aguardando" && (
+                      <>
+                        <button type="button" className="button button-small button-success" onClick={() => alterarStatus(evento, "Aceito")}>Aceitar</button>
+                        <button type="button" className="button button-small button-reject" onClick={() => alterarStatus(evento, "Recusado")}>Recusar</button>
+                      </>
+                    )}
+                    {evento.status !== "Aguardando" && <button type="button" className="button button-small button-danger" onClick={() => excluir(evento)}>Excluir</button>}
+                  </div>
+                </td>
               </tr>
             ))}
             {!carregando && eventosFiltrados.length === 0 && <tr><td colSpan="9">Nenhuma solicitação de evento encontrada.</td></tr>}

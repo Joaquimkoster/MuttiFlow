@@ -4,6 +4,10 @@ function pegarSessaoId(req) {
   return req.headers["x-session-id"];
 }
 
+function quantidadeValida(quantidade) {
+  return Number.isInteger(Number(quantidade)) && Number(quantidade) > 0;
+}
+
 async function listarCarrinho(req, res) {
   try {
     const sessaoId = pegarSessaoId(req);
@@ -33,7 +37,7 @@ async function adicionarItem(req, res) {
       return res.status(400).json({ erro: "Produto é obrigatório" });
     }
 
-    if (!quantidade || quantidade < 1) {
+    if (!quantidadeValida(quantidade)) {
       return res.status(400).json({ erro: "Quantidade inválida" });
     }
 
@@ -59,11 +63,12 @@ async function atualizarQuantidade(req, res) {
       return res.status(400).json({ erro: "Sessão não informada" });
     }
 
-    if (!quantidade || quantidade < 1) {
+    if (!quantidadeValida(quantidade)) {
       return res.status(400).json({ erro: "Quantidade inválida" });
     }
 
-    await Carrinho.atualizarQuantidade(id, quantidade);
+    const atualizado = await Carrinho.atualizarQuantidade(sessaoId, id, Number(quantidade));
+    if (!atualizado) return res.status(404).json({ erro: "Item não encontrado" });
 
     const carrinho = await Carrinho.buscarCarrinho(sessaoId);
 
@@ -78,7 +83,12 @@ async function removerItem(req, res) {
     const sessaoId = pegarSessaoId(req);
     const { id } = req.params;
 
-    await Carrinho.removerItem(id);
+    if (!sessaoId) {
+      return res.status(400).json({ erro: "Sessão não informada" });
+    }
+
+    const removido = await Carrinho.removerItem(sessaoId, id);
+    if (!removido) return res.status(404).json({ erro: "Item não encontrado" });
 
     const carrinho = await Carrinho.buscarCarrinho(sessaoId);
 
@@ -91,6 +101,10 @@ async function removerItem(req, res) {
 async function limparCarrinho(req, res) {
   try {
     const sessaoId = pegarSessaoId(req);
+
+    if (!sessaoId) {
+      return res.status(400).json({ erro: "Sessão não informada" });
+    }
 
     await Carrinho.limparCarrinho(sessaoId);
 

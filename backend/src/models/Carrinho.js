@@ -107,22 +107,29 @@ async function adicionarItem(sessaoId, produtoId, quantidade) {
   return buscarCarrinho(sessaoId);
 }
 
-async function atualizarQuantidade(itemId, quantidade) {
-  await pool.query(
+async function atualizarQuantidade(sessaoId, itemId, quantidade) {
+  const result = await pool.query(
     `
-    UPDATE carrinho_itens
+    UPDATE carrinho_itens ci
     SET quantidade = $1, atualizado_em = CURRENT_TIMESTAMP
-    WHERE id = $2
+    FROM carrinhos c
+    WHERE ci.id = $2 AND ci.carrinho_id = c.id AND c.sessao_id = $3
+    RETURNING ci.id
     `,
-    [quantidade, itemId]
+    [quantidade, itemId, sessaoId]
   );
+  return result.rows[0];
 }
 
-async function removerItem(itemId) {
-  await pool.query(
-    "DELETE FROM carrinho_itens WHERE id = $1",
-    [itemId]
+async function removerItem(sessaoId, itemId) {
+  const result = await pool.query(
+    `DELETE FROM carrinho_itens ci
+     USING carrinhos c
+     WHERE ci.id = $1 AND ci.carrinho_id = c.id AND c.sessao_id = $2
+     RETURNING ci.id`,
+    [itemId, sessaoId]
   );
+  return result.rows[0];
 }
 
 async function limparCarrinho(sessaoId) {

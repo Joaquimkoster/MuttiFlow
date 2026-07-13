@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import { useState } from 'react'
 import { FiCheck, FiShoppingBag } from 'react-icons/fi'
 import { products } from '../data/menuData'
@@ -13,8 +13,8 @@ export default function Produto() {
   const [quantity, setQuantity] = useState(1)
   const [isAdding, setIsAdding] = useState(false)
   const [error, setError] = useState('')
-  const product = products.find((item) => item.id === id) ?? products[0]
-  const related = products.filter((item) => item.id !== product.id).slice(0, 3)
+  const product = products.find((item) => item.id === id)
+  const related = product ? products.filter((item) => item.id !== product.id).slice(0, 3) : []
 
   async function handleAddToCart() {
     try {
@@ -27,6 +27,10 @@ export default function Produto() {
     } finally {
       setIsAdding(false)
     }
+  }
+
+  if (!product) {
+    return <Navigate to="/cardapio" replace />
   }
 
   return (

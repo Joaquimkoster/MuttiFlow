@@ -1,6 +1,14 @@
 const Evento = require('../models/Evento');
 
-const statusPermitidos = ['Aguardando', 'Agendado', 'Confirmado', 'Preparando', 'Finalizado', 'Cancelado'];
+const statusPermitidos = ['Aguardando', 'Aceito', 'Recusado', 'Preparando', 'Finalizado', 'Cancelado'];
+
+function dataEventoValida(valor) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(valor || ''))) return false;
+  const data = new Date(`${valor}T12:00:00`);
+  const hoje = new Date();
+  hoje.setHours(0, 0, 0, 0);
+  return !Number.isNaN(data.getTime()) && data >= hoje;
+}
 
 async function listar(req, res) {
   try {
@@ -21,6 +29,12 @@ async function criar(req, res) {
   }
   if (!Number.isInteger(Number(dados.convidados)) || Number(dados.convidados) < 1) {
     return res.status(400).json({ erro: 'Informe uma quantidade válida de convidados' });
+  }
+  if (!dataEventoValida(dados.data)) {
+    return res.status(400).json({ erro: 'Informe uma data válida para o evento' });
+  }
+  if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(String(dados.hora || ''))) {
+    return res.status(400).json({ erro: 'Informe um horário válido para o evento' });
   }
   if (dados.valor !== '' && dados.valor != null && (!Number.isFinite(Number(dados.valor)) || Number(dados.valor) < 0)) {
     return res.status(400).json({ erro: 'Informe um valor estimado válido' });

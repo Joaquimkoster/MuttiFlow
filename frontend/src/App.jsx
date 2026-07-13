@@ -5,8 +5,7 @@ import Cadastro from "./pages/Cadastro";
 import Dashboard from "./pages/Dashboard";
 import Pedidos from "./pages/Pedidos";
 import Eventos from "./pages/Eventos";
-import Estoque from "./pages/Estoque";
-import Planilha from "./pages/Planilha";
+import CustosReceitas from "./pages/CustosReceitas";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -20,8 +19,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/pedidos" element={<Pedidos />} />
           <Route path="/eventos" element={<Eventos />} />
-          <Route path="/estoque" element={<Estoque />} />
-          <Route path="/planilha" element={<Planilha />} />
+          <Route path="/custos-receitas" element={<CustosReceitas />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

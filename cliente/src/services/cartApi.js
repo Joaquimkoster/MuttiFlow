@@ -1,6 +1,14 @@
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000'
 const SESSION_KEY = 'muttiflow_session_id'
 
+function createSessionId() {
+  if (globalThis.crypto?.randomUUID) {
+    return globalThis.crypto.randomUUID()
+  }
+
+  return `sessao-${Date.now()}-${Math.random().toString(36).slice(2)}`
+}
+
 function getSessionId() {
   const savedSession = localStorage.getItem(SESSION_KEY)
 
@@ -8,20 +16,26 @@ function getSessionId() {
     return savedSession
   }
 
-  const newSession = crypto.randomUUID()
+  const newSession = createSessionId()
   localStorage.setItem(SESSION_KEY, newSession)
   return newSession
 }
 
 async function request(path, options = {}) {
-  const response = await fetch(`${API_URL}${path}`, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      'x-session-id': getSessionId(),
-      ...options.headers,
-    },
-  })
+  let response
+
+  try {
+    response = await fetch(`${API_URL}${path}`, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        'x-session-id': getSessionId(),
+        ...options.headers,
+      },
+    })
+  } catch {
+    throw new Error('Não foi possível conectar ao servidor. Verifique se o backend está ligado.')
+  }
 
   const data = await response.json().catch(() => null)
 
@@ -70,7 +84,12 @@ export function createOrder(deliveryData, couponCode) {
     method: 'POST',
     body: JSON.stringify({
       ...deliveryData,
+      pagamento: 'Pix',
       cupom: couponCode.trim().toUpperCase(),
     }),
   });
+}
+
+export function getPixPayment(pedidoId) {
+  return request(`/pedidos/${pedidoId}/pix`)
 }
