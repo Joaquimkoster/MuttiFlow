@@ -48,7 +48,7 @@ export default function Login() {
   return (
     <div className="auth-page">
       <div className="auth-brand">
-        <h1>MuttiFlow</h1>
+        <h1>Diê Mutti</h1>
       </div>
 
       <div className="auth-panel">

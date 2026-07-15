@@ -66,7 +66,7 @@ export default function Eventos() {
   }
 
   return (
-    <AppLayout title="Eventos" action={<button type="button" className="button" onClick={carregarEventos}>Atualizar</button>}>
+    <AppLayout title="Eventos" action={<button type="button" className="button dashboard-refresh" onClick={carregarEventos} disabled={carregando}><span aria-hidden="true">↻</span>{carregando ? "Atualizando..." : "Atualizar dados"}</button>}>
       {erro && <p className="message message-error" role="alert">{erro}</p>}
       <div className="filters">
         <input className="input" type="search" placeholder="Pesquisar cliente ou tipo..." value={pesquisa} onChange={(event) => setPesquisa(event.target.value)} />

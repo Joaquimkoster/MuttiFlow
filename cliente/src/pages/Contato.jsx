@@ -1,4 +1,4 @@
-import { FiClock, FiFacebook, FiInstagram, FiMapPin, FiPhone } from 'react-icons/fi'
+import { FiArrowUpRight, FiClock, FiInstagram, FiMapPin, FiPhone } from 'react-icons/fi'
 import { SectionHeader } from '../components/ui'
 
 export default function Contato() {
@@ -11,22 +11,18 @@ export default function Contato() {
       />
 
       <div className="contact-grid">
-        <div className="contact-methods">
-          <a className="surface contact-method" href="https://wa.me/5500000000000">
+        <div className="contact-methods" aria-label="Canais de atendimento">
+          <a className="surface contact-method" href="https://wa.me/5519987799094">
             <FiPhone />
             <span>WhatsApp</span>
-            <strong>(00) 00000-0000</strong>
+            <strong>(19) 98779-9094</strong>
           </a>
-          <a className="surface contact-method" href="https://instagram.com">
+          <a className="surface contact-method" href="https://www.instagram.com/die_mutticozinhaartesanal?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==">
             <FiInstagram />
             <span>Instagram</span>
-            <strong>@muttiflow</strong>
+            <strong>@die_mutticozinhaartesanal</strong>
           </a>
-          <a className="surface contact-method" href="https://facebook.com">
-            <FiFacebook />
-            <span>Facebook</span>
-            <strong>/muttiflow</strong>
-          </a>
+
           <div className="surface contact-method">
             <FiClock />
             <span>Funcionamento</span>
@@ -34,13 +30,21 @@ export default function Contato() {
           </div>
         </div>
 
-        <div className="map-card" aria-label="Google Maps">
+        <a
+          className="map-card"
+          href="https://www.google.com/maps/search/?api=1&query=Rua+Vicente+Celestino+Jardim+Pari+Paul%C3%ADnia"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="Abrir endereço no Google Maps"
+        >
           <div>
             <FiMapPin />
-            <strong>Google Maps</strong>
-            <span>Rua das Oliveiras, 128 - Centro</span>
+            <small>Onde estamos</small>
+            <strong>Rua Vicente Celestino</strong>
+            <span>Jardim Pari, Paulínia</span>
+            <span className="map-action">Abrir no Google Maps <FiArrowUpRight /></span>
           </div>
-        </div>
+        </a>
       </div>
     </section>
   )

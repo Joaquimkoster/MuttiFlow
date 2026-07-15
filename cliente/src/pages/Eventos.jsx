@@ -166,7 +166,6 @@ export default function Eventos() {
         </form>
 
         <aside className="surface event-info-panel">
-          <span className="eyebrow">Como funciona</span>
           <h2>Você envia os detalhes. A gente cuida do restante.</h2>
           <div className="event-info-steps">
             <div>

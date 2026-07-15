@@ -3,24 +3,30 @@ import {
   FiChevronRight,
   FiMinus,
   FiPlus,
-  FiStar,
   FiTrash2,
 } from 'react-icons/fi'
 import { formatCurrency } from '../data/menuData'
 
-export function PageHero({ eyebrow, title, text, children, image }) {
+export function PageHero({ title, text, children, image, fallbackImage }) {
   return (
     <section className="page-hero">
       <div className="container hero-grid">
         <div className="hero-copy">
-          {eyebrow && <span className="eyebrow">{eyebrow}</span>}
           <h1>{title}</h1>
           <p>{text}</p>
           {children && <div className="hero-actions">{children}</div>}
         </div>
         {image && (
           <div className="hero-media">
-            <img src={image} alt="" />
+            <img
+              src={image}
+              alt=""
+              onError={(event) => {
+                if (!fallbackImage) return
+                event.currentTarget.onerror = null
+                event.currentTarget.src = fallbackImage
+              }}
+            />
             <div className="hero-stat">
               <strong>4.9</strong>
               <span>avaliação média</span>
@@ -32,11 +38,10 @@ export function PageHero({ eyebrow, title, text, children, image }) {
   )
 }
 
-export function SectionHeader({ eyebrow, title, text, action }) {
+export function SectionHeader({ title, text, action }) {
   return (
     <div className="section-header">
       <div>
-        {eyebrow && <span className="eyebrow">{eyebrow}</span>}
         <h2>{title}</h2>
         {text && <p>{text}</p>}
       </div>
@@ -49,17 +54,20 @@ export function ProductCard({ product, compact = false }) {
   return (
     <article className={`product-card ${compact ? 'compact' : ''}`}>
       <Link to={`/produto/${product.id}`} className="product-image">
-        <img src={product.image} alt={product.name} />
-        <span className="badge">{product.badge}</span>
+        <img
+          src={product.image}
+          alt={product.name}
+          style={{ objectPosition: product.imagePosition }}
+          onError={(event) => {
+            event.currentTarget.onerror = null
+            event.currentTarget.src = product.fallbackImage
+          }}
+        />
       </Link>
       <div className="product-content">
         <div>
           <h3>{product.name}</h3>
           <p>{product.description}</p>
-        </div>
-        <div className="product-meta">
-          <span><FiStar /> {product.rating}</span>
-          <span>{product.serves}</span>
         </div>
         <div className="product-footer">
           <div className="price-group">

@@ -7,6 +7,12 @@ export default function Checkout() {
   const navigate = useNavigate()
   const formRef = useRef(null)
   const [formError, setFormError] = useState('')
+  const today = new Date()
+  const minimumDate = [
+    today.getFullYear(),
+    String(today.getMonth() + 1).padStart(2, '0'),
+    String(today.getDate()).padStart(2, '0'),
+  ].join('-')
   const {
     couponDiscount,
     deliveryData,
@@ -44,13 +50,14 @@ export default function Checkout() {
 
 
   return (
-    <section className="container checkout-layout">
-      <div>
-        <SectionHeader
-          eyebrow="Quase lá"
-          title="Dados para entrega"
-          text="Conte onde e quando devemos entregar. Seus dados serão usados somente para este pedido."
-        />
+    <section className="container checkout-page">
+      <SectionHeader
+        eyebrow="Quase lá"
+        title="Dados para entrega"
+        text="Conte onde e quando devemos entregar. Seus dados serão usados somente para este pedido."
+      />
+      <div className="checkout-layout">
+        <div>
         <form ref={formRef} className="surface checkout-form" onSubmit={(event) => { event.preventDefault(); reviewOrder() }}>
           <div className="form-grid">
             <Field label="Nome">
@@ -69,16 +76,6 @@ export default function Checkout() {
                 onChange={handleDeliveryChange}
                 placeholder="(00) 00000-0000"
                 required
-              />
-            </Field>
-            <Field label="Email">
-              <input
-                name="email"
-                type="email"
-                value={deliveryData.email}
-                onChange={handleDeliveryChange}
-                required
-                placeholder="voce@email.com"
               />
             </Field>
             <Field label="Forma de pagamento">
@@ -123,28 +120,27 @@ export default function Checkout() {
                 required
               />
             </Field>
-            <Field label="Data de entrega">
+            <Field label="Escolha o dia da entrega">
               <input
                 name="dataEntrega"
                 type="date"
-                min={new Date().toISOString().slice(0, 10)}
+                min={minimumDate}
                 value={deliveryData.dataEntrega}
                 onChange={handleDeliveryChange}
                 required
               />
             </Field>
-            <Field label="Horário">
-              <select
+            <Field label="Escolha o horário">
+              <input
                 name="horario"
+                type="time"
+                min="10:00"
+                max="22:00"
+                step="1800"
                 value={deliveryData.horario}
                 onChange={handleDeliveryChange}
                 required
-              >
-                <option value="" disabled>Escolha</option>
-                <option value="11:00 - 12:00">11:00 - 12:00</option>
-                <option value="12:00 - 13:00">12:00 - 13:00</option>
-                <option value="19:00 - 20:00">19:00 - 20:00</option>
-              </select>
+              />
             </Field>
           </div>
           <Field label="Observações">
@@ -157,8 +153,9 @@ export default function Checkout() {
           </Field>
           {formError && <p className="form-error">{formError}</p>}
         </form>
+        </div>
+        <OrderSummary items={items} coupon={couponDiscount} cta="Revisar pedido" onAction={reviewOrder} />
       </div>
-      <OrderSummary items={items} coupon={couponDiscount} cta="Revisar pedido" onAction={reviewOrder} />
     </section>
   )
 }

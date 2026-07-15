@@ -37,7 +37,16 @@ export default function Produto() {
     <section className="container product-page">
       <div className="product-detail-grid">
         <div className="gallery">
-          <img className="main-photo" src={product.image} alt={product.name} />
+          <img
+            className="main-photo"
+            src={product.image}
+            alt={product.name}
+            style={{ objectPosition: product.imagePosition }}
+            onError={(event) => {
+              event.currentTarget.onerror = null
+              event.currentTarget.src = product.fallbackImage
+            }}
+          />
           <div className="thumb-row">
             {[product.image, ...related.map((item) => item.image)].slice(0, 4).map((image) => (
               <img key={image} src={image} alt="" />

@@ -9,10 +9,11 @@ export default function Home() {
   return (
     <>
       <PageHero
-        eyebrow="Receitas que acolhem"
-        title="Comida artesanal para transformar qualquer mesa em encontro."
-        text="Massas frescas, molhos de longa cocção e sobremesas feitas em pequenos lotes. Escolha com calma; nós cuidamos do resto."
-        image={products[0].image}
+        eyebrow="Pães de fermentação natural"
+        title="O tempo faz o pão. O cuidado faz toda a diferença."
+        text="Pães, bolos e massas de longa fermentação, preparados artesanalmente sob encomenda para chegar fresquinhos à sua mesa."
+        image={products[14].image}
+        fallbackImage={products[14].fallbackImage}
       >
         <Link className="button primary" to="/cardapio">Explorar cardápio <FiArrowRight /></Link>
         <Link className="button secondary" to="/eventos">Planejar um evento</Link>
@@ -20,9 +21,9 @@ export default function Home() {
 
       <section className="container section-block">
         <SectionHeader
-          eyebrow="Favoritos da casa"
-          title="Os mais pedidos da semana"
-          text="Pratos escolhidos por quem gosta de servir bem sem abrir mão do sabor de comida feita em casa."
+          eyebrow="Cardápio semanal"
+          title="Um sabor especial para cada dia"
+          text="Da fornada de terça à pizza de sexta: escolha seu favorito e reserve com 1 a 2 dias de antecedência."
           action={<Link className="text-action" to="/cardapio">Ver cardápio completo <FiArrowRight /></Link>}
         />
         <div className="product-grid">

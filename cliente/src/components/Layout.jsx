@@ -1,10 +1,7 @@
 import { useState } from 'react'
 import { NavLink, Link } from 'react-router-dom'
 import {
-  FiClock,
-  FiInstagram,
   FiMenu,
-  FiPhone,
   FiShoppingBag,
   FiX,
 } from 'react-icons/fi'
@@ -28,7 +25,7 @@ export function Layout({ children }) {
           <Link className="brand" to="/" onClick={() => setIsOpen(false)}>
             <span className="brand-mark">M</span>
             <span>
-              <strong>MuttiFlow</strong>
+              <strong>Diê Mutti</strong>
               <small>Cozinha artesanal</small>
             </span>
           </Link>
@@ -76,33 +73,6 @@ export function Layout({ children }) {
 
       <main>{children}</main>
 
-      <footer className="site-footer">
-        <div className="container footer-grid">
-          <div className="footer-intro">
-            <Link className="brand footer-brand" to="/">
-              <span className="brand-mark">M</span>
-              <span><strong>MuttiFlow</strong><small>Cozinha artesanal</small></span>
-            </Link>
-            <p>Receitas feitas com tempo, ingredientes selecionados e cuidado em cada entrega.</p>
-          </div>
-          <div>
-            <h3>Explore</h3>
-            <Link to="/cardapio">Cardápio</Link>
-            <Link to="/eventos">Eventos</Link>
-            <Link to="/historia">Nossa história</Link>
-          </div>
-          <div>
-            <h3>Atendimento</h3>
-            <a href="https://wa.me/5500000000000"><FiPhone /> (00) 00000-0000</a>
-            <a href="https://instagram.com"><FiInstagram /> @muttiflow</a>
-            <span><FiClock /> Terça a domingo, 10h–22h</span>
-          </div>
-        </div>
-        <div className="container footer-bottom">
-          <span>© {new Date().getFullYear()} MuttiFlow</span>
-          <span>Feito para reunir pessoas à mesa.</span>
-        </div>
-      </footer>
     </div>
   )
 }

@@ -60,7 +60,6 @@ export default function Confirmacao() {
           <dl>
             <div><dt>Nome</dt><dd>{deliveryData.nome || 'Não informado'}</dd></div>
             <div><dt>WhatsApp</dt><dd>{deliveryData.whatsapp || 'Não informado'}</dd></div>
-            <div><dt>Email</dt><dd>{deliveryData.email || 'Não informado'}</dd></div>
             <div><dt>Pagamento</dt><dd>Pix</dd></div>
             <div><dt>Endereço</dt><dd>{deliveryData.endereco || 'Não informado'}</dd></div>
             <div><dt>Complemento</dt><dd>{deliveryData.complemento || 'Não informado'}</dd></div>

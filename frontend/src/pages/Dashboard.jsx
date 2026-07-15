@@ -5,6 +5,7 @@ import api from "../services/api";
 const moeda = (valor) => Number(valor || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 const numero = (valor, casas = 0) => Number(valor || 0).toLocaleString("pt-BR", { maximumFractionDigits: casas });
 const dataCurta = (valor) => new Date(`${valor.slice(0, 10)}T12:00:00`).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
+const formatarHorario = (valor) => /^\d{2}:\d{2}$/.test(String(valor || "")) ? `${valor}h` : valor;
 const statusClass = (status) => `order-status order-status-${String(status).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "-")}`;
 
 function BarChart({ data, valueKey, labelKey, currency = false }) {
@@ -101,7 +102,7 @@ export default function Dashboard() {
         </section>
 
         <div className="dashboard-recent-orders">
-          <TablePanel title="Pedidos atualizados recentemente" empty="Nenhum pedido registrado." headers={["Cliente", "Entrega", "Total", "Pagamento", "Status"]} rows={dados.pedidosRecentes.map((pedido) => [pedido.cliente_nome, `${dataCurta(pedido.data_entrega)} às ${pedido.horario}`, moeda(pedido.total), pedido.pagamento_status, <span className={statusClass(pedido.status)}>{pedido.status}</span>])} />
+          <TablePanel title="Pedidos atualizados recentemente" empty="Nenhum pedido registrado." headers={["Cliente", "Entrega", "Total", "Pagamento", "Status"]} rows={dados.pedidosRecentes.map((pedido) => [pedido.cliente_nome, `${dataCurta(pedido.data_entrega)} às ${formatarHorario(pedido.horario)}`, moeda(pedido.total), pedido.pagamento_status, <span className={statusClass(pedido.status)}>{pedido.status}</span>])} />
         </div>
 
         <SectionTitle eyebrow="Desempenho" title="Movimento da operação" description="Acompanhe vendas e volume de pedidos ao longo do tempo." />

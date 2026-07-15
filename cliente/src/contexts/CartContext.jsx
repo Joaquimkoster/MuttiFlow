@@ -31,7 +31,6 @@ export function CartProvider({ children }) {
   const [deliveryData, setDeliveryData] = useState({
     nome: '',
     whatsapp: '',
-    email: '',
     pagamento: 'Pix',
     endereco: '',
     complemento: '',

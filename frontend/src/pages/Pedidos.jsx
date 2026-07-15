@@ -3,6 +3,7 @@ import AppLayout from "../components/AppLayout";
 import api from "../services/api";
 
 const statuses = ["Agendado", "Confirmado", "Preparando", "Pronto", "Saiu para entrega", "Entregue", "Cancelado"];
+const formatarHorario = (valor) => /^\d{2}:\d{2}$/.test(String(valor || "")) ? `${valor}h` : valor;
 
 export default function Pedidos() {
   const [pesquisa, setPesquisa] = useState("");
@@ -33,7 +34,7 @@ export default function Pedidos() {
 
   const pedidosFiltrados = pedidos.filter((pedido) => {
     const termo = pesquisa.toLowerCase();
-    const campos = [pedido.cliente_nome, pedido.produtos, pedido.whatsapp, pedido.email, pedido.endereco, pedido.bairro, pedido.cidade];
+    const campos = [pedido.cliente_nome, pedido.produtos, pedido.whatsapp, pedido.endereco, pedido.bairro, pedido.cidade];
     return campos.some((campo) => String(campo || "").toLowerCase().includes(termo))
       && (!status || pedido.status === status);
   });
@@ -85,7 +86,7 @@ export default function Pedidos() {
   }
 
   return (
-    <AppLayout title="Pedidos" action={<button type="button" className="button" onClick={carregarPedidos}>Atualizar</button>}>
+    <AppLayout title="Pedidos" action={<button type="button" className="button dashboard-refresh" onClick={carregarPedidos} disabled={carregando}><span aria-hidden="true">↻</span>{carregando ? "Atualizando..." : "Atualizar dados"}</button>}>
       {erro && <p className="message message-error" role="alert">{erro}</p>}
       {sucesso && <p className="message message-success" role="status">{sucesso}</p>}
       <div className="filters">
@@ -102,11 +103,11 @@ export default function Pedidos() {
           <tbody>
             {pedidosFiltrados.map((pedido) => (
               <tr key={pedido.id}>
-                <td><div className="table-primary">{pedido.cliente_nome}</div><div className="table-secondary">{pedido.whatsapp}</div>{pedido.email && <div className="table-secondary">{pedido.email}</div>}</td>
+                <td><div className="table-primary">{pedido.cliente_nome}</div><div className="table-secondary">{pedido.whatsapp}</div></td>
                 <td>{pedido.produtos}</td>
                 <td>{Number(pedido.total).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</td>
                 <td><div className="table-secondary">Pix</div><select className="select status-select" value={pedido.pagamento_status || "Pendente"} disabled={salvando[`pagamento-${pedido.id}`]} onChange={(event) => alterarPagamento(pedido, event.target.value)}><option>Pendente</option><option>Pago</option></select></td>
-                <td><div className="table-primary">{new Date(`${pedido.data_entrega.slice(0, 10)}T12:00:00`).toLocaleDateString("pt-BR")}</div><div className="table-secondary">{pedido.horario}</div></td>
+                <td><div className="table-primary">{new Date(`${pedido.data_entrega.slice(0, 10)}T12:00:00`).toLocaleDateString("pt-BR")}</div><div className="table-secondary">{formatarHorario(pedido.horario)}</div></td>
                 <td><div className="delivery-address">{pedido.endereco}</div>{pedido.complemento && <div className="table-secondary">{pedido.complemento}</div>}<div className="table-secondary">{[pedido.bairro, pedido.cidade].filter(Boolean).join(" - ") || "Bairro e cidade não informados"}</div></td>
                 <td><select className="select status-select" value={pedido.status} disabled={salvando[`status-${pedido.id}`]} onChange={(event) => alterarStatus(pedido, event.target.value)}>{statuses.map((nome) => <option key={nome}>{nome}</option>)}</select>{salvando[`status-${pedido.id}`] && <div className="table-secondary">Salvando...</div>}</td>
                 <td><button type="button" className="button button-small button-danger" onClick={() => excluir(pedido)}>Excluir</button></td>

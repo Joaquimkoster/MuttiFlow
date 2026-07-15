@@ -3,7 +3,17 @@ const { gerarPixCopiaECola } = require('../utils/pix');
 
 const statusPermitidos = ['Agendado', 'Confirmado', 'Preparando', 'Pronto', 'Saiu para entrega', 'Entregue', 'Cancelado'];
 const pagamentosPermitidos = ['Pix'];
-const horariosPermitidos = ['11:00 - 12:00', '12:00 - 13:00', '19:00 - 20:00'];
+
+function horarioEntregaValido(valor) {
+  const resultado = /^(\d{2}):(\d{2})$/.exec(String(valor || ''));
+  if (!resultado) return false;
+
+  const horas = Number(resultado[1]);
+  const minutos = Number(resultado[2]);
+  const totalEmMinutos = horas * 60 + minutos;
+
+  return minutos < 60 && totalEmMinutos >= 10 * 60 && totalEmMinutos <= 22 * 60;
+}
 
 function dataEntregaValida(valor) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(String(valor || ''))) return false;
@@ -62,8 +72,8 @@ async function criar(req, res) {
     return res.status(400).json({ erro: 'Informe uma data de entrega válida' });
   }
 
-  if (!horariosPermitidos.includes(dados.horario)) {
-    return res.status(400).json({ erro: 'Horário de entrega inválido' });
+  if (!horarioEntregaValido(dados.horario)) {
+    return res.status(400).json({ erro: 'Escolha um horário entre 10h e 22h' });
   }
 
   try {

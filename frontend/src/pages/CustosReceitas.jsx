@@ -213,7 +213,7 @@ export default function CustosReceitas() {
       {aviso && <p className="message recipe-message" role="status">{aviso}</p>}
 
       <section className="recipe-settings card">
-        <label>Nome da receita<input className="input" value={nomeReceita} onChange={(e) => setNomeReceita(e.target.value)} placeholder="Ex.: Lasanha bolonhesa" /></label>
+        <label>Nome da receita<input className="input" value={nomeReceita} onChange={(e) => setNomeReceita(e.target.value)} placeholder="Ex.: Pão multigrãos" /></label>
         <label>Rendimento (porções)<input className="input" inputMode="decimal" value={rendimento} onChange={(e) => setRendimento(e.target.value)} placeholder="Ex.: 10" /></label>
         <label>Preço por porção<input className="input" inputMode="decimal" value={precoVenda} onChange={(e) => setPrecoVenda(e.target.value)} placeholder="R$ 0,00" /></label>
       </section>

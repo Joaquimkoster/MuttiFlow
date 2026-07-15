@@ -57,7 +57,6 @@ export default function PagamentoPix() {
         <div className="pix-heading">
           <span className="pix-mark">PIX</span>
           <div>
-            <span className="eyebrow">Pagamento seguro</span>
             <h1>Pague seu pedido com Pix</h1>
             <p>Pedido #{pedidoId}. Abra o aplicativo do seu banco e use a opção Pix Copia e Cola.</p>
           </div>

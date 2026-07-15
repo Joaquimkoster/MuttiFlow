@@ -124,20 +124,55 @@ CREATE INDEX IF NOT EXISTS idx_eventos_data ON eventos (data);
 UPDATE eventos SET status = 'Aceito' WHERE status IN ('Agendado', 'Confirmado');
 
 INSERT INTO categorias (nome, slug) VALUES
-  ('Massas', 'massas'),
-  ('Combos', 'combos'),
-  ('Sobremesas', 'sobremesas'),
-  ('Bebidas', 'bebidas')
+  ('Terça', 'terca'),
+  ('Quarta', 'quarta'),
+  ('Quinta', 'quinta'),
+  ('Sexta', 'sexta')
 ON CONFLICT (slug) DO NOTHING;
 
-INSERT INTO produtos (nome, slug, categoria_id, descricao, preco, preco_antigo, imagens, ingredientes, peso, porcao, badge, featured, estoque, ordenacao)
+INSERT INTO produtos (id, nome, slug, categoria_id, descricao, preco, preco_antigo, imagens, ingredientes, peso, porcao, badge, featured, estoque, ordenacao, status)
 VALUES
-  ('Lasanha Família Mutti', 'lasanha-familia', (SELECT id FROM categorias WHERE slug = 'massas'), 'Lasanha artesanal com molho de tomate lento, bechamel cremoso, queijo gratinado e massa fresca.', 89.90, 104.90, '["https://images.unsplash.com/photo-1574894709920-11b28e7367e3?auto=format&fit=crop&w=1000&q=80"]', '["Massa fresca","Molho pomodoro","Carne selecionada","Muçarela","Parmesão"]', '1,4 kg', 'Serve 4 pessoas', 'Mais vendido', TRUE, 100, 1),
-  ('Combo Domingo Italiano', 'combo-domingo', (SELECT id FROM categorias WHERE slug = 'combos'), 'Seleção completa com massa, antepasto, sobremesa e bebida para uma refeição especial.', 149.90, NULL, '["https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=1000&q=80"]', '["Ravioli","Focaccia","Tiramisù","Suco artesanal"]', '2,2 kg', 'Serve 5 pessoas', 'Combo', TRUE, 100, 2),
-  ('Ravioli Caprese', 'ravioli-caprese', (SELECT id FROM categorias WHERE slug = 'massas'), 'Ravioli recheado com queijo, tomate confit e manjericão fresco finalizado com azeite.', 64.90, NULL, '["https://images.unsplash.com/photo-1473093295043-cdd812d0e601?auto=format&fit=crop&w=1000&q=80"]', '["Ravioli fresco","Tomate confit","Manjericão","Azeite","Queijo"]', '650 g', 'Serve 2 pessoas', 'Novo', TRUE, 100, 3),
-  ('Tiramisù Clássico', 'tiramisu', (SELECT id FROM categorias WHERE slug = 'sobremesas'), 'Sobremesa italiana com mascarpone, café espresso, cacau e biscoito champagne.', 32.90, NULL, '["https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?auto=format&fit=crop&w=1000&q=80"]', '["Mascarpone","Café","Cacau","Biscoito champagne"]', '220 g', 'Serve 1 pessoa', 'Premium', FALSE, 100, 4),
-  ('Focaccia da Casa', 'focaccia', (SELECT id FROM categorias WHERE slug = 'massas'), 'Focaccia de fermentação lenta com alecrim, flor de sal e azeite extra virgem.', 28.90, NULL, '["https://images.unsplash.com/photo-1608198093002-ad4e005484ec?auto=format&fit=crop&w=1000&q=80"]', '["Farinha italiana","Azeite","Alecrim","Flor de sal"]', '420 g', 'Serve 3 pessoas', 'Artesanal', FALSE, 100, 5),
-  ('Limonada Siciliana', 'limonada', (SELECT id FROM categorias WHERE slug = 'bebidas'), 'Limonada natural com limão siciliano, hortelã e leve toque de mel.', 16.90, NULL, '["https://images.unsplash.com/photo-1621263764928-df1444c5e859?auto=format&fit=crop&w=1000&q=80"]', '["Limão siciliano","Hortelã","Mel","Água com gás"]', '500 ml', 'Serve 1 pessoa', 'Natural', FALSE, 100, 6)
-ON CONFLICT (slug) DO NOTHING;
+  (1, 'Multigrãos', 'multigraos', (SELECT id FROM categorias WHERE slug = 'terca'), 'Blend de farinhas com sementes especiais: girassol, abóbora, chia, linhaça, gergelim e avelã.', 26.00, NULL, '["https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=1000&q=85"]', '["Farinha artesanal","Girassol","Abóbora","Chia","Linhaça","Gergelim","Avelã"]', 'Produção artesanal', '1 unidade', 'Nutritivo', TRUE, 100, 1, 'ativo'),
+  (2, 'Pão Caseirinho', 'pao-caseirinho', (SELECT id FROM categorias WHERE slug = 'terca'), 'Feito com levain e trigo especial. Aromático, macio e com gostinho de casa.', 22.00, NULL, '["https://images.unsplash.com/photo-1549931319-a545dcf3bc73?auto=format&fit=crop&w=1000&q=85"]', '["Farinha de trigo","Levain","Água","Sal"]', 'Produção artesanal', '1 unidade', 'Queridinho', TRUE, 100, 2, 'ativo'),
+  (3, 'Kit Pão de Batata', 'kit-pao-batata', (SELECT id FROM categorias WHERE slug = 'terca'), 'Kit com 4 pãezinhos de batata, com 50 g cada.', 9.00, NULL, '["https://images.unsplash.com/photo-1757332914512-ffaf5b521ba8?auto=format&fit=crop&w=1000&q=85"]', '["Farinha de trigo","Batata","Fermento","Sal"]', '4 × 50 g', 'Kit com 4 unidades', 'Terça', FALSE, 100, 3, 'ativo'),
+  (4, 'Kit Cenourinha', 'kit-cenourinha', (SELECT id FROM categorias WHERE slug = 'terca'), 'Oito pãezinhos nutritivos feitos com levain e cúrcuma.', 18.00, NULL, '["https://images.unsplash.com/photo-1586444248902-2f64eddc13df?auto=format&fit=crop&w=1000&q=85"]', '["Farinha de trigo","Cenoura","Levain","Cúrcuma"]', '8 × 30 g', 'Kit com 8 unidades', 'Terça', FALSE, 100, 4, 'ativo'),
+  (5, 'Pão de Forma', 'pao-forma', (SELECT id FROM categorias WHERE slug = 'terca'), 'Feito com levain e trigo especial, com miolo leve e macio.', 22.00, NULL, '["https://images.unsplash.com/photo-1598373182133-52452f7691ef?auto=format&fit=crop&w=1000&q=85"]', '["Farinha de trigo","Levain","Água","Sal"]', 'Produção artesanal', '1 unidade', 'Terça', FALSE, 100, 5, 'ativo'),
+  (6, 'Pão Italiano', 'pao-italiano', (SELECT id FROM categorias WHERE slug = 'quarta'), 'Pão rústico de fermentação lenta, casca dourada e aroma especial.', 27.00, NULL, '["https://images.unsplash.com/photo-1585478259715-876acc5be8eb?auto=format&fit=crop&w=1000&q=85"]', '["Farinha de trigo","Levain","Água","Sal"]', 'Produção artesanal', '1 unidade', 'Fermentação lenta', TRUE, 100, 6, 'ativo'),
+  (7, 'Alecrim e Azeitonas', 'alecrim-azeitonas', (SELECT id FROM categorias WHERE slug = 'quarta'), 'Pão de longa fermentação, aromatizado com alecrim fresco e azeitonas.', 28.00, NULL, '["https://images.unsplash.com/photo-1608198093002-ad4e005484ec?auto=format&fit=crop&w=1000&q=85"]', '["Farinha de trigo","Levain","Alecrim fresco","Azeitonas"]', 'Produção artesanal', '1 unidade', 'Quarta', FALSE, 100, 7, 'ativo'),
+  (8, 'Pão Multigrãos', 'pao-multigraos', (SELECT id FROM categorias WHERE slug = 'quarta'), 'Pão rústico e nutritivo com uma seleção de grãos incorporados à massa.', 30.00, NULL, '["https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&w=1000&q=85"]', '["Farinha artesanal","Levain","Sementes","Grãos"]', 'Produção artesanal', '1 unidade', 'Rústico', FALSE, 100, 8, 'ativo'),
+  (9, 'Crosta de Aveia', 'crosta-aveia', (SELECT id FROM categorias WHERE slug = 'quarta'), 'Pão de levain muito aromático, finalizado com uma delicada crosta de aveia.', 27.00, NULL, '["https://images.unsplash.com/photo-1568471173242-461f0a730452?auto=format&fit=crop&w=1000&q=85"]', '["Farinha de trigo","Levain","Aveia","Sal"]', 'Produção artesanal', '1 unidade', 'Quarta', FALSE, 100, 9, 'ativo'),
+  (10, 'Pão Australiano', 'pao-australiano', (SELECT id FROM categorias WHERE slug = 'quarta'), 'Pão macio e úmido, feito com cacau e melaço, de aroma marcante.', 28.00, NULL, '["https://images.unsplash.com/photo-1559811814-e2c57b5e69df?auto=format&fit=crop&w=1000&q=85"]', '["Farinha de trigo","Cacau","Melaço","Fermento natural"]', 'Produção artesanal', '1 unidade', 'Quarta', FALSE, 100, 10, 'ativo'),
+  (11, 'Pão Colonial', 'pao-colonial', (SELECT id FROM categorias WHERE slug = 'quinta'), 'Massa macia com toque de fubá, casca dourada e sabor caseiro.', 24.00, NULL, '["https://images.unsplash.com/photo-1541833000669-75e92444e2a3?auto=format&fit=crop&w=1000&q=85"]', '["Farinha de trigo","Fubá","Levain","Sal"]', 'Produção artesanal', '1 unidade', 'Quinta', FALSE, 100, 11, 'ativo'),
+  (12, 'Bolo de Cenoura', 'bolo-cenoura', (SELECT id FROM categorias WHERE slug = 'quinta'), 'Feito com cenouras frescas e cobertura tradicional de chocolate 100% cacau.', 18.00, NULL, '["https://images.unsplash.com/photo-1621303837174-89787a7d4729?auto=format&fit=crop&w=1000&q=85"]', '["Cenoura fresca","Farinha","Ovos","Chocolate 100% cacau"]', 'Produção artesanal', '1 unidade', 'Afetivo', FALSE, 100, 12, 'ativo'),
+  (13, 'Bolo de Chocolate', 'bolo-chocolate', (SELECT id FROM categorias WHERE slug = 'quinta'), 'Bolo macio feito com cacau 100% e uma leve cobertura de ganache.', 18.00, NULL, '["https://images.unsplash.com/photo-1540337706094-da10342c93d8?auto=format&fit=crop&w=1000&q=85"]', '["Cacau 100%","Farinha","Ovos","Ganache"]', 'Produção artesanal', '1 unidade', 'Quinta', FALSE, 100, 13, 'ativo'),
+  (14, 'Cinnamon Rolls', 'cinnamon-rolls', (SELECT id FROM categorias WHERE slug = 'quinta'), 'Dois pãezinhos suecos em espiral, recheados com canela e finalizados com cream cheese.', 20.00, NULL, '["https://images.unsplash.com/photo-1559745757-f6219279c3e5?auto=format&fit=crop&w=1000&q=85"]', '["Canela","Manteiga","Açúcar","Cream cheese","Baunilha"]', 'Produção artesanal', 'Kit com 2 unidades', 'Kit com 2', TRUE, 100, 14, 'ativo'),
+  (15, 'Pizza Pomodoro', 'pizza-pomodoro', (SELECT id FROM categorias WHERE slug = 'sexta'), 'Pizza de longa fermentação, entre 24 e 72 horas, leve, saborosa e fácil de digerir.', 15.00, NULL, '["https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=1000&q=85"]', '["Farinha italiana","Molho pomodoro","Fermento natural","Azeite"]', 'Produção artesanal', '1 unidade', '24–72h', TRUE, 100, 15, 'ativo'),
+  (16, 'Focaccia Tradicional', 'focaccia-tradicional', (SELECT id FROM categorias WHERE slug = 'sexta'), 'Pão italiano rústico, de fermentação lenta, crocante por fora e úmido por dentro.', 28.00, NULL, '["https://images.unsplash.com/photo-1593280405106-e438ebe93f5b?auto=format&fit=crop&w=1000&q=85"]', '["Farinha italiana","Azeite","Fermento natural","Sal"]', 'Produção artesanal', '1 unidade', 'Sexta', FALSE, 100, 16, 'ativo'),
+  (17, 'Tortano Napoletano', 'tortano-napoletano', (SELECT id FROM categorias WHERE slug = 'sexta'), 'Pão típico de Nápoles enriquecido com calabresa, azeite e funcho.', 30.00, NULL, '["https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=1000&q=85"]', '["Farinha de trigo","Calabresa","Azeite","Funcho"]', 'Produção artesanal', '1 unidade', 'Nápoles', FALSE, 100, 17, 'ativo')
+ON CONFLICT (id) DO UPDATE SET
+  nome = EXCLUDED.nome,
+  slug = EXCLUDED.slug,
+  categoria_id = EXCLUDED.categoria_id,
+  descricao = EXCLUDED.descricao,
+  preco = EXCLUDED.preco,
+  preco_antigo = EXCLUDED.preco_antigo,
+  imagens = EXCLUDED.imagens,
+  ingredientes = EXCLUDED.ingredientes,
+  peso = EXCLUDED.peso,
+  porcao = EXCLUDED.porcao,
+  badge = EXCLUDED.badge,
+  featured = EXCLUDED.featured,
+  estoque = EXCLUDED.estoque,
+  ordenacao = EXCLUDED.ordenacao,
+  status = EXCLUDED.status,
+  updated_at = CURRENT_TIMESTAMP;
+
+SELECT setval(pg_get_serial_sequence('produtos', 'id'), (SELECT MAX(id) FROM produtos));
+
+UPDATE carrinho_itens ci
+SET preco_unitario = p.preco,
+    atualizado_em = CURRENT_TIMESTAMP
+FROM produtos p
+WHERE p.id = ci.produto_id;
 
 COMMIT;

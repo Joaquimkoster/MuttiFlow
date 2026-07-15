@@ -14,12 +14,16 @@ export default function Cardapio() {
     })
   }, [activeCategory, search])
 
+  const visibleDays = categories
+    .filter((category) => category.id !== 'todos')
+    .filter((category) => activeCategory === 'todos' || category.id === activeCategory)
+
   return (
     <section className="container menu-page">
       <SectionHeader
-        eyebrow="Cardápio artesanal"
-        title="Escolha o que vai à mesa"
-        text="Pratos preparados em pequenos lotes, com ingredientes selecionados e porções pensadas para compartilhar."
+        eyebrow="Cardápio semanal"
+        title="Escolha o dia da sua fornada"
+        text="Produção artesanal sob encomenda. Reserve com 1 a 2 dias de antecedência para receber tudo fresco."
       />
 
       <div className="menu-toolbar">
@@ -35,8 +39,23 @@ export default function Cardapio() {
         <CategoryChips categories={categories} activeCategory={activeCategory} onSelect={setActiveCategory} />
       </div>
 
-      <div className="product-grid">
-        {filteredProducts.map((product) => <ProductCard key={product.id} product={product} />)}
+      <div className="weekly-menu">
+        {visibleDays.map((day) => {
+          const dayProducts = filteredProducts.filter((product) => product.category === day.id)
+          if (!dayProducts.length) return null
+
+          return (
+            <section className="menu-day" key={day.id}>
+              <div className="day-heading">
+                <span>{day.label}</span>
+                <small>{day.id === 'sexta' ? 'Massas de longa fermentação' : 'Fornada artesanal'}</small>
+              </div>
+              <div className="product-grid">
+                {dayProducts.map((product) => <ProductCard key={product.id} product={product} />)}
+              </div>
+            </section>
+          )
+        })}
       </div>
 
       {filteredProducts.length === 0 && (

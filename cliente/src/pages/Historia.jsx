@@ -25,11 +25,20 @@ export default function Sobre() {
         <div className="container section-block">
           <SectionHeader eyebrow="Nossa equipe" title="Pessoas por trás de cada pedido" />
           <div className="team-grid">
-            {['Clara Mutti', 'André Souza', 'Lia Martins'].map((name) => (
-              <article className="team-card" key={name}>
-                <span className="avatar large">{name.charAt(0)}</span>
-                <h3>{name}</h3>
-                <p>Cozinha, atendimento e experiência do cliente.</p>
+            {[
+              {
+                name: 'Josiane Köster',
+                role: 'Chefe de cozinha, responsável pelas receitas e pela produção artesanal.',
+              },
+              {
+                name: 'Joaquim Köster',
+                role: 'Técnico de TI e desenvolvedor dos dois sistemas da Diê Mutti.',
+              },
+            ].map((member) => (
+              <article className="team-card" key={member.name}>
+                <span className="avatar large">{member.name.charAt(0)}</span>
+                <h3>{member.name}</h3>
+                <p>{member.role}</p>
               </article>
             ))}
           </div>
