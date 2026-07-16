@@ -1,5 +1,5 @@
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { FiCheck, FiShoppingBag } from 'react-icons/fi'
 import { products } from '../data/menuData'
 import { ProductCard, QuantityStepper, SectionHeader } from '../components/ui'
@@ -14,7 +14,25 @@ export default function Produto() {
   const [isAdding, setIsAdding] = useState(false)
   const [error, setError] = useState('')
   const product = products.find((item) => item.id === id)
-  const related = product ? products.filter((item) => item.id !== product.id).slice(0, 3) : []
+  const related = useMemo(() => {
+    if (!product) return []
+
+    const available = products.filter((item) => item.id !== product.id)
+    for (let index = available.length - 1; index > 0; index -= 1) {
+      const randomIndex = Math.floor(Math.random() * (index + 1))
+      const currentItem = available[index]
+      available[index] = available[randomIndex]
+      available[randomIndex] = currentItem
+    }
+
+    return available.slice(0, 3)
+  }, [product])
+  const galleryImages = product?.gallery || []
+  const [selectedImage, setSelectedImage] = useState(product?.image || '')
+
+  useEffect(() => {
+    setSelectedImage(product?.image || '')
+  }, [product])
 
   async function handleAddToCart() {
     try {
@@ -39,7 +57,7 @@ export default function Produto() {
         <div className="gallery">
           <img
             className="main-photo"
-            src={product.image}
+            src={selectedImage}
             alt={product.name}
             style={{ objectPosition: product.imagePosition }}
             onError={(event) => {
@@ -48,8 +66,23 @@ export default function Produto() {
             }}
           />
           <div className="thumb-row">
-            {[product.image, ...related.map((item) => item.image)].slice(0, 4).map((image) => (
-              <img key={image} src={image} alt="" />
+            {galleryImages.map((image, index) => (
+              <button
+                className={selectedImage === image ? 'active' : ''}
+                key={image}
+                type="button"
+                onClick={() => setSelectedImage(image)}
+                aria-label={`Ver imagem ${index + 1} de ${product.name}`}
+              >
+                <img
+                  src={image}
+                  alt=""
+                  onError={(event) => {
+                    event.currentTarget.onerror = null
+                    event.currentTarget.src = product.fallbackImage
+                  }}
+                />
+              </button>
             ))}
           </div>
         </div>

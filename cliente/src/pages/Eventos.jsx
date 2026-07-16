@@ -12,9 +12,29 @@ const tipos = [
   'Outro',
 ]
 
+function parseCurrency(value) {
+  const cleaned = String(value).replace(/[^\d,.-]/g, '')
+  const normalized = cleaned.includes(',')
+    ? cleaned.replace(/\./g, '').replace(',', '.')
+    : cleaned
+  return Number(normalized)
+}
+
+function formatCurrency(value) {
+  const number = parseCurrency(value)
+  if (!Number.isFinite(number) || number < 0) return value
+
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+    minimumFractionDigits: 2,
+  }).format(number)
+}
+
 export default function Eventos() {
   const [form, setForm] = useState({
     cliente: '',
+    telefone: '',
     tipo: '',
     data: '',
     hora: '',
@@ -32,15 +52,24 @@ export default function Eventos() {
     })
   }
 
+  function handleCurrencyChange(event) {
+    const digits = event.target.value.replace(/\D/g, '')
+    const value = digits === '' ? '' : formatCurrency(Number(digits) / 100)
+    setForm({ ...form, valor: value })
+  }
+
   async function handleSubmit(e) {
     e.preventDefault()
     setSubmitting(true)
     setMessage({ type: '', text: '' })
 
     try {
-      await createEvent(form)
+      await createEvent({
+        ...form,
+        valor: form.valor === '' ? '' : parseCurrency(form.valor),
+      })
       setMessage({ type: 'success', text: 'Solicitação enviada para análise. Nossa equipe entrará em contato após aceitar o evento.' })
-      setForm({ cliente: '', tipo: '', data: '', hora: '', endereco: '', convidados: '', valor: '' })
+      setForm({ cliente: '', telefone: '', tipo: '', data: '', hora: '', endereco: '', convidados: '', valor: '' })
     } catch (error) {
       setMessage({ type: 'error', text: error.message })
     } finally {
@@ -70,6 +99,20 @@ export default function Eventos() {
               value={form.cliente}
               onChange={handleChange}
               placeholder="Nome completo"
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Telefone / WhatsApp</label>
+
+            <input
+              type="tel"
+              name="telefone"
+              value={form.telefone}
+              onChange={handleChange}
+              placeholder="(00) 00000-0000"
+              autoComplete="tel"
               required
             />
           </div>
@@ -137,10 +180,12 @@ export default function Eventos() {
 
               <input
                 type="number"
+                className="number-input"
                 name="convidados"
                 value={form.convidados}
                 onChange={handleChange}
                 min="1"
+                placeholder="Digite a quantidade"
                 required
               />
             </div>
@@ -149,12 +194,12 @@ export default function Eventos() {
               <label>Valor estimado</label>
 
               <input
-                type="number"
+                type="text"
                 name="valor"
                 value={form.valor}
-                onChange={handleChange}
-                min="0"
-                step="0.01"
+                onChange={handleCurrencyChange}
+                inputMode="decimal"
+                placeholder="R$ 0,00"
               />
             </div>
           </div>

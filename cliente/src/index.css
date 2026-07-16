@@ -78,12 +78,15 @@ button {
 }
 
 button:focus-visible,
-a:focus-visible,
+a:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, .24);
+  outline-offset: 3px;
+}
+
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline: 3px solid rgba(37, 99, 235, .24);
-  outline-offset: 3px;
+  outline: none;
 }
 
 ::selection {

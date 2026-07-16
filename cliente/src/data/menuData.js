@@ -19,6 +19,35 @@ export const categories = [
   { id: 'sexta', label: 'Sexta', icon: FiHeart },
 ]
 
+const productImageQueries = {
+  multigraos: 'multigrain,artisan,bread',
+  'pao-caseirinho': 'homemade,white,bread',
+  'kit-pao-batata': 'potato,bread,rolls',
+  'kit-cenourinha': 'carrot,bread,rolls',
+  'pao-forma': 'sandwich,bread,loaf',
+  'pao-italiano': 'italian,artisan,bread',
+  'alecrim-azeitonas': 'olive,rosemary,bread',
+  'pao-multigraos': 'seeded,multigrain,bread',
+  'crosta-aveia': 'oat,bread,loaf',
+  'pao-australiano': 'australian,brown,bread',
+  'pao-colonial': 'rustic,corn,bread',
+  'bolo-cenoura': 'carrot,cake',
+  'bolo-chocolate': 'chocolate,cake',
+  'cinnamon-rolls': 'cinnamon,rolls',
+  'pizza-pomodoro': 'margherita,tomato,pizza',
+  'focaccia-tradicional': 'traditional,focaccia,bread',
+  'tortano-napoletano': 'neapolitan,stuffed,bread',
+}
+
+const buildGallery = (id, mainImage) => {
+  const query = productImageQueries[id] || 'artisan,bakery'
+  return [
+    mainImage,
+    ...Array.from({ length: 3 }, (_, index) =>
+      `https://loremflickr.com/1000/850/${query}/all?lock=${id.length * 100 + index + 1}`),
+  ]
+}
+
 const makeProduct = (id, backendId, name, category, price, description, options = {}) => ({
   id,
   backendId,
@@ -28,6 +57,7 @@ const makeProduct = (id, backendId, name, category, price, description, options 
   price,
   rating: 4.9,
   image: options.image || (category === 'sexta' ? pizzaImage : paesImage),
+  gallery: buildGallery(id, options.image || (category === 'sexta' ? pizzaImage : paesImage)),
   fallbackImage: category === 'sexta' ? pizzaImage : paesImage,
   description,
   ingredients: options.ingredients || description.split(',').slice(0, 4).map((item) => item.trim()),

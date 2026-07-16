@@ -63,20 +63,22 @@ export default function Carrinho() {
   }
 
   return (
-    <section className="container checkout-layout">
-      <div>
-        <SectionHeader
-          eyebrow="Seu pedido"
-          title="Carrinho"
-          text="Confira os pratos escolhidos e ajuste as quantidades antes de continuar."
-          action={
-            items.length > 0 && (
-              <button className="button secondary small" type="button" onClick={handleClearCart} disabled={isUpdating}>
-                <FiTrash2 /> Limpar
-              </button>
-            )
-          }
-        />
+    <section className="container checkout-page">
+      <SectionHeader
+        eyebrow="Seu pedido"
+        title="Carrinho"
+        text="Confira os pratos escolhidos e ajuste as quantidades antes de continuar."
+        action={
+          items.length > 0 && (
+            <button className="button secondary small" type="button" onClick={handleClearCart} disabled={isUpdating}>
+              <FiTrash2 /> Limpar
+            </button>
+          )
+        }
+      />
+
+      <div className="checkout-layout">
+        <div>
 
         {error && (
           <div className="surface state-card error-state">
@@ -129,8 +131,9 @@ export default function Carrinho() {
           )}
           <Link className="text-link" to="/cardapio">Continuar comprando</Link>
         </div>
+        </div>
+        <OrderSummary items={items} coupon={couponDiscount} />
       </div>
-      <OrderSummary items={items} coupon={couponDiscount} />
     </section>
   )
 }

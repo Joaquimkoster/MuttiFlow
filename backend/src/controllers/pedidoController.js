@@ -5,14 +5,7 @@ const statusPermitidos = ['Agendado', 'Confirmado', 'Preparando', 'Pronto', 'Sai
 const pagamentosPermitidos = ['Pix'];
 
 function horarioEntregaValido(valor) {
-  const resultado = /^(\d{2}):(\d{2})$/.exec(String(valor || ''));
-  if (!resultado) return false;
-
-  const horas = Number(resultado[1]);
-  const minutos = Number(resultado[2]);
-  const totalEmMinutos = horas * 60 + minutos;
-
-  return minutos < 60 && totalEmMinutos >= 10 * 60 && totalEmMinutos <= 22 * 60;
+  return /^([01]\d|2[0-3]):[0-5]\d$/.test(String(valor || ''));
 }
 
 function dataEntregaValida(valor) {
@@ -73,7 +66,7 @@ async function criar(req, res) {
   }
 
   if (!horarioEntregaValido(dados.horario)) {
-    return res.status(400).json({ erro: 'Escolha um horário entre 10h e 22h' });
+    return res.status(400).json({ erro: 'Informe um horário válido' });
   }
 
   try {

@@ -27,10 +27,6 @@ export function PageHero({ title, text, children, image, fallbackImage }) {
                 event.currentTarget.src = fallbackImage
               }}
             />
-            <div className="hero-stat">
-              <strong>4.9</strong>
-              <span>avaliação média</span>
-            </div>
           </div>
         )}
       </div>

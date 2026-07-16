@@ -22,7 +22,7 @@ export function Layout({ children }) {
     <div className="client-app">
       <header className="site-header">
         <div className="container nav-shell">
-          <Link className="brand" to="/" onClick={() => setIsOpen(false)}>
+          <Link className="brand" to="/cardapio" onClick={() => setIsOpen(false)}>
             <span className="brand-mark">M</span>
             <span>
               <strong>Diê Mutti</strong>

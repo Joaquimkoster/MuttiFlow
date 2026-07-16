@@ -1,6 +1,5 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { Layout } from './components/Layout'
-import Home from './pages/Home'
 import Cardapio from './pages/Cardapio'
 import Produto from './pages/Produto'
 import Carrinho from './pages/Carrinho'
@@ -20,7 +19,7 @@ function App() {
       <CartProvider>
         <Layout>
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Navigate to="/cardapio" replace />} />
             <Route path="/cardapio" element={<Cardapio />} />
             <Route path="/produto/:id" element={<Produto />} />
             <Route path="/carrinho" element={<Carrinho />} />
@@ -32,7 +31,7 @@ function App() {
             <Route path="/contato" element={<Contato />} />
             <Route path="/historia" element={<Historia />} />
             <Route path="/eventos" element={<Eventos />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<Navigate to="/cardapio" replace />} />
           </Routes>
         </Layout>
       </CartProvider>

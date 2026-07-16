@@ -134,9 +134,6 @@ export default function Checkout() {
               <input
                 name="horario"
                 type="time"
-                min="10:00"
-                max="22:00"
-                step="1800"
                 value={deliveryData.horario}
                 onChange={handleDeliveryChange}
                 required

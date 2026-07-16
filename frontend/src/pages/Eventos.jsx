@@ -40,7 +40,9 @@ export default function Eventos() {
 
   const eventosFiltrados = eventos.filter((evento) => {
     const busca = pesquisa.toLowerCase();
-    return (evento.cliente.toLowerCase().includes(busca) || evento.tipo.toLowerCase().includes(busca))
+    return (evento.cliente.toLowerCase().includes(busca)
+      || evento.tipo.toLowerCase().includes(busca)
+      || String(evento.telefone || "").includes(busca))
       && (!status || evento.status === status);
   });
 
@@ -82,7 +84,7 @@ export default function Eventos() {
           <tbody>
             {eventosFiltrados.map((evento) => (
               <tr key={evento.id}>
-                <td>{evento.cliente}</td><td>{evento.tipo}</td>
+                <td><div className="table-primary">{evento.cliente}</div><div className="table-secondary">{evento.telefone || "Telefone não informado"}</div></td><td>{evento.tipo}</td>
                 <td>{new Date(`${evento.data.slice(0, 10)}T12:00:00`).toLocaleDateString("pt-BR")}</td>
                 <td>{evento.horario.slice(0, 5)}</td><td>{evento.endereco}</td><td>{evento.convidados}</td>
                 <td>{evento.valor == null ? "A definir" : Number(evento.valor).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</td>

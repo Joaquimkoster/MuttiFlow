@@ -21,7 +21,7 @@ async function listar(req, res) {
 
 async function criar(req, res) {
   const dados = req.body;
-  const obrigatorios = ['cliente', 'tipo', 'data', 'hora', 'endereco', 'convidados'];
+  const obrigatorios = ['cliente', 'telefone', 'tipo', 'data', 'hora', 'endereco', 'convidados'];
   const ausentes = obrigatorios.filter((campo) => !String(dados[campo] || '').trim());
 
   if (ausentes.length) {
@@ -29,6 +29,10 @@ async function criar(req, res) {
   }
   if (!Number.isInteger(Number(dados.convidados)) || Number(dados.convidados) < 1) {
     return res.status(400).json({ erro: 'Informe uma quantidade válida de convidados' });
+  }
+  const telefone = String(dados.telefone || '').replace(/\D/g, '');
+  if (telefone.length < 10 || telefone.length > 11) {
+    return res.status(400).json({ erro: 'Informe um telefone válido com DDD' });
   }
   if (!dataEventoValida(dados.data)) {
     return res.status(400).json({ erro: 'Informe uma data válida para o evento' });

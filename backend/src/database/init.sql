@@ -106,6 +106,7 @@ CREATE TABLE IF NOT EXISTS pedido_itens (
 CREATE TABLE IF NOT EXISTS eventos (
   id SERIAL PRIMARY KEY,
   cliente VARCHAR(150) NOT NULL,
+  telefone VARCHAR(30) NOT NULL,
   tipo VARCHAR(80) NOT NULL,
   data DATE NOT NULL,
   horario TIME NOT NULL,
@@ -116,6 +117,8 @@ CREATE TABLE IF NOT EXISTS eventos (
   criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+ALTER TABLE eventos ADD COLUMN IF NOT EXISTS telefone VARCHAR(30);
 
 CREATE INDEX IF NOT EXISTS idx_pedidos_criado_em ON pedidos (criado_em DESC);
 CREATE INDEX IF NOT EXISTS idx_pedidos_data_entrega ON pedidos (data_entrega);

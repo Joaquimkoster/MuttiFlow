@@ -14,10 +14,10 @@ async function listar() {
 
 async function criar(dados) {
   const result = await pool.query(
-    `INSERT INTO eventos (cliente, tipo, data, horario, endereco, convidados, valor)
-     VALUES ($1, $2, $3, $4, $5, $6, $7)
+    `INSERT INTO eventos (cliente, telefone, tipo, data, horario, endereco, convidados, valor)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
      RETURNING *`,
-    [dados.cliente, dados.tipo, dados.data, dados.hora, dados.endereco, dados.convidados, dados.valor || null]
+    [dados.cliente, dados.telefone, dados.tipo, dados.data, dados.hora, dados.endereco, dados.convidados, dados.valor || null]
   );
   return result.rows[0];
 }
