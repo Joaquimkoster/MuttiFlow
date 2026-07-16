@@ -105,7 +105,12 @@ export default function Pedidos() {
               <tr key={pedido.id}>
                 <td><div className="table-primary">{pedido.cliente_nome}</div><div className="table-secondary">{pedido.whatsapp}</div></td>
                 <td>{pedido.produtos}</td>
-                <td>{Number(pedido.total).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</td>
+                <td>
+                  <div className="table-primary">{Number(pedido.total).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</div>
+                  {Number(pedido.frete) === 0 && (
+                    <div className="table-secondary">Frete via Uber</div>
+                  )}
+                </td>
                 <td><div className="table-secondary">Pix</div><select className="select status-select" value={pedido.pagamento_status || "Pendente"} disabled={salvando[`pagamento-${pedido.id}`]} onChange={(event) => alterarPagamento(pedido, event.target.value)}><option>Pendente</option><option>Pago</option></select></td>
                 <td><div className="table-primary">{new Date(`${pedido.data_entrega.slice(0, 10)}T12:00:00`).toLocaleDateString("pt-BR")}</div><div className="table-secondary">{formatarHorario(pedido.horario)}</div></td>
                 <td><div className="delivery-address">{pedido.endereco}</div>{pedido.complemento && <div className="table-secondary">{pedido.complemento}</div>}<div className="table-secondary">{[pedido.bairro, pedido.cidade].filter(Boolean).join(" - ") || "Bairro e cidade não informados"}</div></td>

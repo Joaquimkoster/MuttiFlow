@@ -1,5 +1,87 @@
 const { pool } = require('../config/database');
 
+function normalizarRegiao(valor) {
+  return String(valor || 'Não informado')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim() || 'nao informado';
+}
+
+function distanciaEdicao(a, b) {
+  if (Math.abs(a.length - b.length) > 1) return 2;
+
+  let anterior = Array.from({ length: b.length + 1 }, (_, indice) => indice);
+  for (let i = 1; i <= a.length; i += 1) {
+    const atual = [i];
+    for (let j = 1; j <= b.length; j += 1) {
+      atual[j] = Math.min(
+        atual[j - 1] + 1,
+        anterior[j] + 1,
+        anterior[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)
+      );
+    }
+    anterior = atual;
+  }
+  return anterior[b.length];
+}
+
+function nomeDaRegiao(grupo) {
+  if (grupo.chave === 'nao informado') return 'Não informado';
+  const nomes = [...grupo.nomes.entries()].sort(([nomeA, usosA], [nomeB, usosB]) => {
+    const acentosA = nomeA.normalize('NFD').length - nomeA.length;
+    const acentosB = nomeB.normalize('NFD').length - nomeB.length;
+    return acentosB - acentosA || usosB - usosA;
+  });
+  return nomes[0][0]
+    .toLocaleLowerCase('pt-BR')
+    .split(/\s+/)
+    .map((parte) => parte.charAt(0).toLocaleUpperCase('pt-BR') + parte.slice(1))
+    .join(' ');
+}
+
+function agruparRegioes(linhas) {
+  const exatas = new Map();
+
+  for (const linha of linhas) {
+    const chave = normalizarRegiao(linha.regiao);
+    const nomeOriginal = String(linha.regiao || 'Não informado').trim();
+    const atual = exatas.get(chave) || { chave, pedidos: 0, receita: 0, nomes: new Map() };
+    atual.pedidos += 1;
+    atual.receita += Number(linha.total);
+    atual.nomes.set(nomeOriginal, (atual.nomes.get(nomeOriginal) || 0) + 1);
+    exatas.set(chave, atual);
+  }
+
+  const grupos = [];
+  const ordenadas = [...exatas.values()].sort((a, b) => b.pedidos - a.pedidos);
+  for (const regiao of ordenadas) {
+    const semelhante = regiao.chave.length >= 4
+      ? grupos.find((grupo) => distanciaEdicao(regiao.chave, grupo.chave) <= 1)
+      : null;
+
+    if (semelhante) {
+      semelhante.pedidos += regiao.pedidos;
+      semelhante.receita += regiao.receita;
+      for (const [nome, usos] of regiao.nomes) {
+        semelhante.nomes.set(nome, (semelhante.nomes.get(nome) || 0) + usos);
+      }
+    } else {
+      grupos.push({ ...regiao });
+    }
+  }
+
+  return grupos
+    .sort((a, b) => b.pedidos - a.pedidos || b.receita - a.receita)
+    .slice(0, 8)
+    .map((grupo) => ({
+      regiao: nomeDaRegiao(grupo),
+      pedidos: grupo.pedidos,
+      receita: grupo.receita,
+    }));
+}
+
 async function buscar() {
   const [resumo, produtos, regioes, proximosEventos, clientesInativos, faturamentoDia, pedidosSemana, pedidosRecentes] = await Promise.all([
     pool.query(`
@@ -39,10 +121,9 @@ async function buscar() {
       GROUP BY pi.produto_nome ORDER BY quantidade DESC, receita DESC
     `),
     pool.query(`
-      SELECT COALESCE(NULLIF(bairro,''), NULLIF(cidade,''), 'Não informado') regiao,
-        COUNT(*)::int pedidos, SUM(total) receita
+      SELECT COALESCE(NULLIF(TRIM(bairro),''), NULLIF(TRIM(cidade),''), 'Não informado') regiao,
+        total
       FROM pedidos WHERE status <> 'Cancelado'
-      GROUP BY 1 ORDER BY pedidos DESC, receita DESC LIMIT 8
     `),
     pool.query(`SELECT id, cliente, tipo, data, horario, convidados, valor, status
       FROM eventos WHERE data >= CURRENT_DATE AND status <> 'Cancelado'
@@ -80,7 +161,7 @@ async function buscar() {
     produtosMaisVendidos: ranking.slice(0, 5),
     produtosMenosVendidos: [...ranking].sort((a, b) => Number(a.quantidade) - Number(b.quantidade)).slice(0, 5),
     receitaPorProduto: ranking,
-    regioes: regioes.rows,
+    regioes: agruparRegioes(regioes.rows),
     proximosEventos: proximosEventos.rows,
     eventosSemConfirmacao: proximosEventos.rows.filter((evento) => evento.status === 'Aguardando'),
     clientesInativos: clientesInativos.rows,

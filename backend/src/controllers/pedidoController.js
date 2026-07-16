@@ -37,6 +37,7 @@ async function criar(req, res) {
     'whatsapp',
     'pagamento',
     'endereco',
+    'regiaoEntrega',
     'dataEntrega',
     'horario',
   ];
@@ -59,6 +60,10 @@ async function criar(req, res) {
 
   if (!pagamentosPermitidos.includes(dados.pagamento)) {
     return res.status(400).json({ erro: 'Forma de pagamento inválida' });
+  }
+
+  if (!['paulinia', 'outras'].includes(dados.regiaoEntrega)) {
+    return res.status(400).json({ erro: 'Região de entrega inválida' });
   }
 
   if (!dataEntregaValida(dados.dataEntrega)) {

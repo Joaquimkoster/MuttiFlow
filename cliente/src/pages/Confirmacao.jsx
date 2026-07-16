@@ -10,6 +10,7 @@ export default function Confirmacao() {
   const {
     couponDiscount,
     deliveryData,
+    deliveryRegion,
     isLoading,
     items,
     submitOrder,
@@ -47,6 +48,10 @@ export default function Confirmacao() {
     return <Navigate to="/checkout" replace />
   }
 
+  if (!deliveryRegion) {
+    return <Navigate to="/carrinho" replace />
+  }
+
   return (
     <section className="container checkout-page">
       <SectionHeader
@@ -67,6 +72,7 @@ export default function Confirmacao() {
               <div><dt>Complemento</dt><dd>{deliveryData.complemento || 'Não informado'}</dd></div>
               <div><dt>Cidade</dt><dd>{deliveryData.cidade || 'Não informada'}</dd></div>
               <div><dt>Bairro</dt><dd>{deliveryData.bairro || 'Não informado'}</dd></div>
+              <div><dt>Região de entrega</dt><dd>{deliveryRegion === 'paulinia' ? 'Paulínia — R$ 7,00' : 'Campinas/outras — via Uber, valor a confirmar'}</dd></div>
               <div><dt>Data de entrega</dt><dd>{deliveryData.dataEntrega || 'Não informado'}</dd></div>
               <div><dt>Horário</dt><dd>{deliveryData.horario || 'Não informado'}</dd></div>
               <div><dt>Observações</dt><dd>{deliveryData.observacoes || 'Nenhuma'}</dd></div>
@@ -82,6 +88,8 @@ export default function Confirmacao() {
         <OrderSummary
           items={items}
           coupon={couponDiscount}
+          delivery={deliveryRegion === 'paulinia' ? 7 : 0}
+          deliveryLabel={deliveryRegion === 'outras' ? 'Via Uber (a confirmar)' : undefined}
           cta="Confirmar e pagar com Pix"
           onAction={handleSubmit}
           disabled={submitting}

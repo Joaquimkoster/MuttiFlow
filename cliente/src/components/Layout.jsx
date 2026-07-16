@@ -25,7 +25,7 @@ export function Layout({ children }) {
           <Link className="brand" to="/cardapio" onClick={() => setIsOpen(false)}>
             <span className="brand-mark">M</span>
             <span>
-              <strong>Diê Mutti</strong>
+              <strong>Die Mutti</strong>
               <small>Cozinha artesanal</small>
             </span>
           </Link>

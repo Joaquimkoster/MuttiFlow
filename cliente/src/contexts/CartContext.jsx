@@ -28,6 +28,7 @@ export function CartProvider({ children }) {
   const [couponCode, setCouponCode] = useState('')
   const [couponDiscount, setCouponDiscount] = useState(0)
   const [couponMessage, setCouponMessage] = useState('')
+  const [deliveryRegion, setDeliveryRegion] = useState('')
   const [deliveryData, setDeliveryData] = useState({
     nome: '',
     whatsapp: '',
@@ -89,6 +90,7 @@ export function CartProvider({ children }) {
     setCouponCode('')
     setCouponDiscount(0)
     setCouponMessage('')
+    setDeliveryRegion('')
     await loadCart()
   }
 
@@ -98,7 +100,8 @@ export function CartProvider({ children }) {
 
     const order = await createOrder(
       deliveryData,
-      couponCode
+      couponCode,
+      deliveryRegion
     );
 
     setCart(null);
@@ -141,7 +144,9 @@ export function CartProvider({ children }) {
         submitOrder,
         updateItem,
         deliveryData,
+        deliveryRegion,
         setDeliveryData,
+        setDeliveryRegion,
       }}
     >
       {children}

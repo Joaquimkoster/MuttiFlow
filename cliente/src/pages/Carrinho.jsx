@@ -11,6 +11,7 @@ export default function Carrinho() {
     couponCode,
     couponDiscount,
     couponMessage,
+    deliveryRegion,
     emptyCart,
     error,
     isLoading,
@@ -18,6 +19,7 @@ export default function Carrinho() {
     loadCart,
     removeItem: removeCartLine,
     setCouponCode,
+    setDeliveryRegion,
     setError,
     updateItem,
   } = useCart()
@@ -131,8 +133,41 @@ export default function Carrinho() {
           )}
           <Link className="text-link" to="/cardapio">Continuar comprando</Link>
         </div>
+
+        <div className="surface delivery-card">
+          <h2>Região de entrega</h2>
+          <p>Selecione onde o pedido será entregue:</p>
+          <div className="delivery-options">
+            <label className={deliveryRegion === 'paulinia' ? 'delivery-option selected' : 'delivery-option'}>
+              <input
+                type="radio"
+                name="deliveryRegion"
+                value="paulinia"
+                checked={deliveryRegion === 'paulinia'}
+                onChange={(event) => setDeliveryRegion(event.target.value)}
+              />
+              <span><strong>Paulínia</strong><small>Frete fixo de R$ 7,00</small></span>
+            </label>
+            <label className={deliveryRegion === 'outras' ? 'delivery-option selected' : 'delivery-option'}>
+              <input
+                type="radio"
+                name="deliveryRegion"
+                value="outras"
+                checked={deliveryRegion === 'outras'}
+                onChange={(event) => setDeliveryRegion(event.target.value)}
+              />
+              <span><strong>Campinas e outras regiões</strong><small>Entrega via Uber; o valor do frete será informado pelo WhatsApp</small></span>
+            </label>
+          </div>
         </div>
-        <OrderSummary items={items} coupon={couponDiscount} />
+        </div>
+        <OrderSummary
+          items={items}
+          coupon={couponDiscount}
+          delivery={deliveryRegion === 'paulinia' ? 7 : 0}
+          deliveryLabel={deliveryRegion === 'outras' ? 'Via Uber (a confirmar)' : deliveryRegion ? undefined : 'Selecione a região'}
+          disabled={!deliveryRegion || items.length === 0}
+        />
       </div>
     </section>
   )

@@ -1,5 +1,5 @@
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { FiCheck, FiShoppingBag } from 'react-icons/fi'
 import { products } from '../data/menuData'
 import { ProductCard, QuantityStepper, SectionHeader } from '../components/ui'
@@ -27,13 +27,6 @@ export default function Produto() {
 
     return available.slice(0, 3)
   }, [product])
-  const galleryImages = product?.gallery || []
-  const [selectedImage, setSelectedImage] = useState(product?.image || '')
-
-  useEffect(() => {
-    setSelectedImage(product?.image || '')
-  }, [product])
-
   async function handleAddToCart() {
     try {
       setIsAdding(true)
@@ -57,7 +50,7 @@ export default function Produto() {
         <div className="gallery">
           <img
             className="main-photo"
-            src={selectedImage}
+            src={product.image}
             alt={product.name}
             style={{ objectPosition: product.imagePosition }}
             onError={(event) => {
@@ -65,26 +58,6 @@ export default function Produto() {
               event.currentTarget.src = product.fallbackImage
             }}
           />
-          <div className="thumb-row">
-            {galleryImages.map((image, index) => (
-              <button
-                className={selectedImage === image ? 'active' : ''}
-                key={image}
-                type="button"
-                onClick={() => setSelectedImage(image)}
-                aria-label={`Ver imagem ${index + 1} de ${product.name}`}
-              >
-                <img
-                  src={image}
-                  alt=""
-                  onError={(event) => {
-                    event.currentTarget.onerror = null
-                    event.currentTarget.src = product.fallbackImage
-                  }}
-                />
-              </button>
-            ))}
-          </div>
         </div>
 
         <article className="detail-panel">

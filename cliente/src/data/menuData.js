@@ -10,6 +10,10 @@ import {
 } from 'react-icons/fi'
 import paesImage from '../assets/cardapio/paes-artesanais.jpeg'
 import pizzaImage from '../assets/cardapio/pizza-artesanal.jpeg'
+import kitPaoBatataImage from '../assets/produtos/kit-pao-batata.jpeg'
+import focacciaTradicionalImage from '../assets/produtos/focaccia-tradicional.jpeg'
+import boloChocolateImage from '../assets/produtos/bolo-chocolate.jpeg'
+import cinnamonRollsImage from '../assets/produtos/cinnamon-rolls.jpeg'
 
 export const categories = [
   { id: 'todos', label: 'Semana toda', icon: FiShoppingBag },
@@ -18,35 +22,6 @@ export const categories = [
   { id: 'quinta', label: 'Quinta', icon: FiCoffee },
   { id: 'sexta', label: 'Sexta', icon: FiHeart },
 ]
-
-const productImageQueries = {
-  multigraos: 'multigrain,artisan,bread',
-  'pao-caseirinho': 'homemade,white,bread',
-  'kit-pao-batata': 'potato,bread,rolls',
-  'kit-cenourinha': 'carrot,bread,rolls',
-  'pao-forma': 'sandwich,bread,loaf',
-  'pao-italiano': 'italian,artisan,bread',
-  'alecrim-azeitonas': 'olive,rosemary,bread',
-  'pao-multigraos': 'seeded,multigrain,bread',
-  'crosta-aveia': 'oat,bread,loaf',
-  'pao-australiano': 'australian,brown,bread',
-  'pao-colonial': 'rustic,corn,bread',
-  'bolo-cenoura': 'carrot,cake',
-  'bolo-chocolate': 'chocolate,cake',
-  'cinnamon-rolls': 'cinnamon,rolls',
-  'pizza-pomodoro': 'margherita,tomato,pizza',
-  'focaccia-tradicional': 'traditional,focaccia,bread',
-  'tortano-napoletano': 'neapolitan,stuffed,bread',
-}
-
-const buildGallery = (id, mainImage) => {
-  const query = productImageQueries[id] || 'artisan,bakery'
-  return [
-    mainImage,
-    ...Array.from({ length: 3 }, (_, index) =>
-      `https://loremflickr.com/1000/850/${query}/all?lock=${id.length * 100 + index + 1}`),
-  ]
-}
 
 const makeProduct = (id, backendId, name, category, price, description, options = {}) => ({
   id,
@@ -57,7 +32,6 @@ const makeProduct = (id, backendId, name, category, price, description, options 
   price,
   rating: 4.9,
   image: options.image || (category === 'sexta' ? pizzaImage : paesImage),
-  gallery: buildGallery(id, options.image || (category === 'sexta' ? pizzaImage : paesImage)),
   fallbackImage: category === 'sexta' ? pizzaImage : paesImage,
   description,
   ingredients: options.ingredients || description.split(',').slice(0, 4).map((item) => item.trim()),
@@ -71,7 +45,7 @@ const makeProduct = (id, backendId, name, category, price, description, options 
 export const products = [
   makeProduct('multigraos', 1, 'Multigrãos', 'terca', 26, 'Blend de farinhas com sementes especiais: girassol, abóbora, chia, linhaça, gergelim e avelã.', { featured: true, badge: 'Nutritivo', image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=1000&q=85', ingredients: ['Farinha artesanal', 'Girassol', 'Abóbora', 'Chia', 'Linhaça', 'Gergelim', 'Avelã'] }),
   makeProduct('pao-caseirinho', 2, 'Pão Caseirinho', 'terca', 22, 'Feito com levain e trigo especial. Aromático, macio e com gostinho de casa.', { featured: true, badge: 'Queridinho', image: 'https://images.unsplash.com/photo-1549931319-a545dcf3bc73?auto=format&fit=crop&w=1000&q=85', ingredients: ['Farinha de trigo', 'Levain', 'Água', 'Sal'] }),
-  makeProduct('kit-pao-batata', 3, 'Kit Pão de Batata', 'terca', 9, 'Kit com 4 pãezinhos de batata, com 50 g cada.', { image: 'https://images.unsplash.com/photo-1757332914512-ffaf5b521ba8?auto=format&fit=crop&w=1000&q=85', weight: '4 × 50 g', serves: 'Kit com 4 unidades' }),
+  makeProduct('kit-pao-batata', 3, 'Kit Pão de Batata', 'terca', 9, 'Kit com 4 pãezinhos de batata, com 50 g cada.', { image: kitPaoBatataImage, imagePosition: '50% center', weight: '4 × 50 g', serves: 'Kit com 4 unidades' }),
   makeProduct('kit-cenourinha', 4, 'Kit Cenourinha', 'terca', 18, 'Oito pãezinhos nutritivos feitos com levain e cúrcuma.', { image: 'https://images.unsplash.com/photo-1586444248902-2f64eddc13df?auto=format&fit=crop&w=1000&q=85', weight: '8 × 30 g', serves: 'Kit com 8 unidades', ingredients: ['Farinha de trigo', 'Cenoura', 'Levain', 'Cúrcuma'] }),
   makeProduct('pao-forma', 5, 'Pão de Forma', 'terca', 22, 'Feito com levain e trigo especial, com miolo leve e macio.', { image: 'https://images.unsplash.com/photo-1598373182133-52452f7691ef?auto=format&fit=crop&w=1000&q=85' }),
 
@@ -83,11 +57,11 @@ export const products = [
 
   makeProduct('pao-colonial', 11, 'Pão Colonial', 'quinta', 24, 'Massa macia com toque de fubá, casca dourada e sabor caseiro.', { image: 'https://images.unsplash.com/photo-1541833000669-75e92444e2a3?auto=format&fit=crop&w=1000&q=85', ingredients: ['Farinha de trigo', 'Fubá', 'Levain', 'Sal'] }),
   makeProduct('bolo-cenoura', 12, 'Bolo de Cenoura', 'quinta', 18, 'Feito com cenouras frescas e cobertura tradicional de chocolate 100% cacau.', { badge: 'Afetivo', image: 'https://images.unsplash.com/photo-1621303837174-89787a7d4729?auto=format&fit=crop&w=1000&q=85', ingredients: ['Cenoura fresca', 'Farinha', 'Ovos', 'Chocolate 100% cacau'] }),
-  makeProduct('bolo-chocolate', 13, 'Bolo de Chocolate', 'quinta', 18, 'Bolo macio feito com cacau 100% e uma leve cobertura de ganache.', { image: 'https://images.unsplash.com/photo-1540337706094-da10342c93d8?auto=format&fit=crop&w=1000&q=85', ingredients: ['Cacau 100%', 'Farinha', 'Ovos', 'Ganache'] }),
-  makeProduct('cinnamon-rolls', 14, 'Cinnamon Rolls', 'quinta', 20, 'Dois pãezinhos suecos em espiral, recheados com canela e finalizados com cream cheese.', { featured: true, badge: 'Kit com 2', image: 'https://images.unsplash.com/photo-1559745757-f6219279c3e5?auto=format&fit=crop&w=1000&q=85', serves: 'Kit com 2 unidades', ingredients: ['Canela', 'Manteiga', 'Açúcar', 'Cream cheese', 'Baunilha'] }),
+  makeProduct('bolo-chocolate', 13, 'Bolo de Chocolate', 'quinta', 18, 'Bolo macio feito com cacau 100% e uma leve cobertura de ganache.', { image: boloChocolateImage, ingredients: ['Cacau 100%', 'Farinha', 'Ovos', 'Ganache'] }),
+  makeProduct('cinnamon-rolls', 14, 'Cinnamon Rolls', 'quinta', 20, 'Dois pãezinhos suecos em espiral, recheados com canela e finalizados com cream cheese.', { featured: true, badge: 'Kit com 2', image: cinnamonRollsImage, imagePosition: '18% 75%', serves: 'Kit com 2 unidades', ingredients: ['Canela', 'Manteiga', 'Açúcar', 'Cream cheese', 'Baunilha'] }),
 
   makeProduct('pizza-pomodoro', 15, 'Pizza Pomodoro', 'sexta', 15, 'Pizza de longa fermentação, entre 24 e 72 horas, leve, saborosa e fácil de digerir.', { featured: true, badge: '24–72h', image: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=1000&q=85', ingredients: ['Farinha italiana', 'Molho pomodoro', 'Fermento natural', 'Azeite'] }),
-  makeProduct('focaccia-tradicional', 16, 'Focaccia Tradicional', 'sexta', 28, 'Pão italiano rústico, de fermentação lenta, crocante por fora e úmido por dentro.', { image: 'https://images.unsplash.com/photo-1593280405106-e438ebe93f5b?auto=format&fit=crop&w=1000&q=85', ingredients: ['Farinha italiana', 'Azeite', 'Fermento natural', 'Sal'] }),
+  makeProduct('focaccia-tradicional', 16, 'Focaccia Tradicional', 'sexta', 28, 'Pão italiano rústico, de fermentação lenta, crocante por fora e úmido por dentro.', { image: focacciaTradicionalImage, ingredients: ['Farinha italiana', 'Azeite', 'Fermento natural', 'Sal'] }),
   makeProduct('tortano-napoletano', 17, 'Tortano Napoletano', 'sexta', 30, 'Pão típico de Nápoles enriquecido com calabresa, azeite e funcho.', { badge: 'Nápoles', image: 'https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=1000&q=85', ingredients: ['Farinha de trigo', 'Calabresa', 'Azeite', 'Funcho'] }),
 ]
 

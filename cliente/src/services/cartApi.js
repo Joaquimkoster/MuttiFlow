@@ -79,13 +79,14 @@ export function clearCart() {
   })
 }
 
-export function createOrder(deliveryData, couponCode) {
+export function createOrder(deliveryData, couponCode, deliveryRegion) {
   return request('/pedidos', {
     method: 'POST',
     body: JSON.stringify({
       ...deliveryData,
       pagamento: 'Pix',
       cupom: couponCode.trim().toUpperCase(),
+      regiaoEntrega: deliveryRegion,
     }),
   });
 }

@@ -1253,6 +1253,65 @@
   margin-top: 16px;
 }
 
+.delivery-card {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.delivery-card h2 {
+  color: var(--nav);
+  font-family: var(--font-display);
+  font-size: 20px;
+}
+
+.delivery-card > p {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.delivery-options {
+  display: grid;
+  gap: 10px;
+}
+
+.delivery-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+  cursor: pointer;
+  transition: border-color .2s ease, background .2s ease;
+}
+
+.delivery-option.selected {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.delivery-option input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary);
+}
+
+.delivery-option span {
+  display: grid;
+  gap: 3px;
+}
+
+.delivery-option strong {
+  color: var(--nav);
+}
+
+.delivery-option small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
 .input-with-button {
   display: grid;
   grid-template-columns: 1fr auto;
@@ -1281,6 +1340,7 @@
 
 .summary-list strong {
   color: var(--nav);
+  text-align: right;
 }
 
 .summary-total {

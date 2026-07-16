@@ -16,6 +16,7 @@ export default function Checkout() {
   const {
     couponDiscount,
     deliveryData,
+    deliveryRegion,
     isLoading,
     items,
     setDeliveryData,
@@ -46,6 +47,10 @@ export default function Checkout() {
 
   if (!isLoading && items.length === 0) {
     return <Navigate to="/cardapio" replace />
+  }
+
+  if (!deliveryRegion) {
+    return <Navigate to="/carrinho" replace />
   }
 
 
@@ -151,7 +156,14 @@ export default function Checkout() {
           {formError && <p className="form-error">{formError}</p>}
         </form>
         </div>
-        <OrderSummary items={items} coupon={couponDiscount} cta="Revisar pedido" onAction={reviewOrder} />
+        <OrderSummary
+          items={items}
+          coupon={couponDiscount}
+          delivery={deliveryRegion === 'paulinia' ? 7 : 0}
+          deliveryLabel={deliveryRegion === 'outras' ? 'Via Uber (a confirmar)' : undefined}
+          cta="Revisar pedido"
+          onAction={reviewOrder}
+        />
       </div>
     </section>
   )

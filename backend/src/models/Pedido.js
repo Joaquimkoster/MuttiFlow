@@ -30,9 +30,13 @@ async function criar(sessaoId, dados) {
       (total, item) => total + Number(item.preco_unitario) * item.quantidade,
       0
     );
-    const frete = 7;
+    const frete = dados.regiaoEntrega === 'paulinia' ? 7 : 0;
     const desconto = dados.cupom === 'MUTTI15' ? 10 : 0;
     const total = subtotal + frete - desconto;
+    const regiaoEntrega = dados.regiaoEntrega === 'paulinia'
+      ? 'Entrega em Paulínia — frete fixo de R$ 7,00'
+      : 'Entrega em Campinas/outra região — Uber calculado à parte';
+    const observacoes = [regiaoEntrega, dados.observacoes].filter(Boolean).join(' | ');
 
     const pedido = await client.query(
       `INSERT INTO pedidos (
@@ -45,7 +49,7 @@ async function criar(sessaoId, dados) {
         sessaoId, dados.nome, dados.whatsapp, dados.email || null,
         dados.pagamento, dados.endereco, dados.complemento || null,
         dados.cidade || null, dados.bairro || null, dados.dataEntrega,
-        dados.horario, dados.observacoes || null,
+        dados.horario, observacoes,
         subtotal, frete, desconto, total,
       ]
     );
