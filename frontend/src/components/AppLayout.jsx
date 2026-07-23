@@ -4,14 +4,12 @@ const menuItems = [
   { label: "Dashboard", path: "/dashboard", icon: "dashboard" },
   { label: "Pedidos", path: "/pedidos", icon: "orders" },
   { label: "Eventos", path: "/eventos", icon: "calendar" },
-  { label: "Custos e receitas", path: "/custos-receitas", icon: "calculator" },
 ];
 
 const icons = {
   dashboard: <><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></>,
   orders: <><path d="M6 3h12l2 4-2 4H6L4 7l2-4Z"/><path d="M6 11v10h12V11M9 15h6"/></>,
   calendar: <><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></>,
-  calculator: <><rect x="4" y="2" width="16" height="20" rx="3"/><path d="M8 6h8v4H8zM8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/></>,
 };
 
 function Icon({ name }) {
@@ -22,7 +20,6 @@ const pageDescriptions = {
   Dashboard: "Visão geral da operação",
   Pedidos: "Acompanhe produção e entregas",
   Eventos: "Solicitações e agenda de eventos",
-  "Custos e receitas": "Calcule ingredientes, rendimento, preço e margem",
 };
 
 export default function AppLayout({ title, action, children }) {

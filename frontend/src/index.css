@@ -230,6 +230,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px s
 .recipe-table tfoot td { padding: 15px 12px; border-bottom: 0; background: #f8fafc; color: var(--text); font-size: .8rem; font-weight: 850; text-align: right; }
 .recipe-table tfoot td:nth-last-child(2) { text-align: left; }
 
+
 .message { margin: 0 auto 16px; padding: 12px 14px; border-radius: 11px; font-size: .83rem; font-weight: 650; }
 .message-error { border: 1px solid #fecaca; background: #fef2f2; color: #b91c1c; }
 .message-success { border: 1px solid #bbf7d0; background: #f0fdf4; color: #15803d; }

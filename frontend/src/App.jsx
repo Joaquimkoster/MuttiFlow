@@ -5,7 +5,6 @@ import Cadastro from "./pages/Cadastro";
 import Dashboard from "./pages/Dashboard";
 import Pedidos from "./pages/Pedidos";
 import Eventos from "./pages/Eventos";
-import CustosReceitas from "./pages/CustosReceitas";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -19,7 +18,6 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/pedidos" element={<Pedidos />} />
           <Route path="/eventos" element={<Eventos />} />
-          <Route path="/custos-receitas" element={<CustosReceitas />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />
