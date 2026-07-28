@@ -37,10 +37,6 @@ export default function Login() {
     }
   };
 
-  const handleCadastro = () => {
-    navigate("/cadastro");
-  };
-
   if (localStorage.getItem("muttiflow_token")) {
     return <Navigate to="/dashboard" replace />;
   }
@@ -111,15 +107,6 @@ export default function Login() {
             </p>
           )}
 
-          <div className="auth-links">
-            <button
-              type="button"
-              onClick={handleCadastro}
-              className="link-button"
-            >
-              Criar conta
-            </button>
-          </div>
         </form>
       </div>
     </div>

@@ -10,6 +10,7 @@ import PagamentoPix from './pages/PagamentoPix'
 import Contato from './pages/Contato'
 import Historia from './pages/Historia'
 import Eventos from './pages/Eventos'
+import AcompanharPedido from './pages/AcompanharPedido'
 import { CartProvider } from './contexts/CartContext'
 import './App.css'
 
@@ -27,6 +28,7 @@ function App() {
             <Route path="/confirmacao" element={<Confirmacao />} />
             <Route path="/pagamento-pix/:pedidoId" element={<PagamentoPix />} />
             <Route path="/pedido-finalizado" element={<PedidoFinalizado />} />
+            <Route path="/pedido/:codigo" element={<AcompanharPedido />} />
             <Route path="/obrigado" element={<PedidoFinalizado />} />
             <Route path="/contato" element={<Contato />} />
             <Route path="/historia" element={<Historia />} />

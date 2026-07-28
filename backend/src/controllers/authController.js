@@ -1,26 +1,29 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { buscarPorEmail, buscarPorNome, criarUsuario } = require('../models/Usuario');
+const { buscarPorEmail, buscarPorNome, criarUsuario, contarUsuarios } = require('../models/Usuario');
+const { obterJwtSecret } = require('../config/jwt');
+const { limparTentativas, registrarFalha } = require('../middlewares/loginLimiter');
+const { emailValido, nomeValido, senhaForte } = require('../utils/validacoes');
 
 function gerarToken(usuario) {
 	return jwt.sign(
-		{ id: usuario.id, email: usuario.email, nome: usuario.nome },
-		process.env.JWT_SECRET || 'muttiflow-secret',
-		{ expiresIn: process.env.JWT_EXPIRES_IN || '30d' },
+		{ id: usuario.id, email: usuario.email, nome: usuario.nome, funcao: usuario.funcao },
+		obterJwtSecret(),
+		{ expiresIn: process.env.JWT_EXPIRES_IN || '2h' },
 	);
 }
 
 async function cadastro(req, res) {
 	try {
-		const { nome, email, senha } = req.body;
+		const { nome, email, senha, funcao } = req.body;
 		const emailNormalizado = String(email || '').trim().toLowerCase();
 		const nomeNormalizado = String(nome || '').trim();
 
-		if (!nomeNormalizado || !emailNormalizado || !senha) {
+		if (!nomeValido(nomeNormalizado) || !emailValido(emailNormalizado) || !senha) {
 			return res.status(400).json({ erro: 'Preencha nome, e-mail e senha.' });
 		}
-		if (String(senha).length < 6) {
-			return res.status(400).json({ erro: 'A senha deve ter pelo menos 6 caracteres.' });
+		if (!senhaForte(senha)) {
+			return res.status(400).json({ erro: 'A senha deve ter 8 caracteres, incluindo maiúscula, minúscula e número.' });
 		}
 
 		const usuarioExistente = await buscarPorEmail(emailNormalizado);
@@ -28,7 +31,9 @@ async function cadastro(req, res) {
 			return res.status(409).json({ erro: 'E-mail já cadastrado.' });
 		}
 
-		const usuario = await criarUsuario({ nome: nomeNormalizado, email: emailNormalizado, senha });
+		const primeiroUsuario = await contarUsuarios() === 0;
+		const funcaoNova = primeiroUsuario ? 'admin' : (funcao === 'admin' ? 'admin' : 'operador');
+		const usuario = await criarUsuario({ nome: nomeNormalizado, email: emailNormalizado, senha, funcao: funcaoNova });
 
 		return res.status(201).json({
 			mensagem: 'Usuário criado com sucesso.',
@@ -54,13 +59,16 @@ async function login(req, res) {
 			? await buscarPorNome(identificador)
 			: await buscarPorEmail(identificador.toLowerCase());
 		if (!usuario) {
+			registrarFalha(req);
 			return res.status(401).json({ erro: 'Credenciais inválidas.' });
 		}
 
 		const senhaValida = await bcrypt.compare(senha, usuario.senha);
 		if (!senhaValida) {
+			registrarFalha(req);
 			return res.status(401).json({ erro: 'Credenciais inválidas.' });
 		}
+		limparTentativas(req);
 
 		const token = gerarToken(usuario);
 
@@ -70,6 +78,7 @@ async function login(req, res) {
 				id: usuario.id,
 				nome: usuario.nome,
 				email: usuario.email,
+				funcao: usuario.funcao,
 			},
 		});
 	} catch (error) {

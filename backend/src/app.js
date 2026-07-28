@@ -11,10 +11,28 @@ const dashboardRoutes = require('./routes/dashboardRoutes');
 
 const app = express();
 
+const origensPermitidas = [
+	process.env.CLIENTE_URL || 'http://localhost:5173',
+	process.env.ADMIN_URL || 'http://localhost:5174',
+].filter(Boolean);
+
+function origemLocalDeDesenvolvimento(origin) {
+	if (process.env.NODE_ENV === 'production') return false;
+	return /^http:\/\/(localhost|127\.0\.0\.1|10(?:\.\d{1,3}){3}|192\.168(?:\.\d{1,3}){2}|172\.(?:1[6-9]|2\d|3[01])(?:\.\d{1,3}){2}):(5173|5174)$/.test(origin);
+}
+
 app.use(helmet());
-app.use(cors());
+app.use(cors({
+	origin(origin, callback) {
+		if (!origin || origensPermitidas.includes(origin) || origemLocalDeDesenvolvimento(origin)) return callback(null, true);
+		const error = new Error('Origem não permitida pelo CORS.');
+		error.status = 403;
+		return callback(error);
+	},
+	credentials: true,
+}));
 app.use(morgan('dev'));
-app.use(express.json());
+app.use(express.json({ limit: '100kb' }));
 
 app.get('/health', async (req, res) => {
 	try {
@@ -37,7 +55,7 @@ app.use((req, res) => {
 
 app.use((err, req, res, next) => {
 	console.error(err);
-	res.status(500).json({ erro: 'Erro interno do servidor.' });
+	res.status(err.status || 500).json({ erro: err.status === 403 ? err.message : 'Erro interno do servidor.' });
 });
 
 module.exports = app;

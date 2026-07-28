@@ -1,14 +1,7 @@
 const Evento = require('../models/Evento');
+const { dataValida, horarioValido, nomeValido, telefoneValido, valorNaoNegativo } = require('../utils/validacoes');
 
 const statusPermitidos = ['Aguardando', 'Aceito', 'Recusado', 'Preparando', 'Finalizado', 'Cancelado'];
-
-function dataEventoValida(valor) {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(valor || ''))) return false;
-  const data = new Date(`${valor}T12:00:00`);
-  const hoje = new Date();
-  hoje.setHours(0, 0, 0, 0);
-  return !Number.isNaN(data.getTime()) && data >= hoje;
-}
 
 async function listar(req, res) {
   try {
@@ -27,20 +20,22 @@ async function criar(req, res) {
   if (ausentes.length) {
     return res.status(400).json({ erro: `Preencha os campos: ${ausentes.join(', ')}` });
   }
+  if (!nomeValido(dados.cliente)) {
+    return res.status(400).json({ erro: 'Informe um nome válido' });
+  }
   if (!Number.isInteger(Number(dados.convidados)) || Number(dados.convidados) < 1) {
     return res.status(400).json({ erro: 'Informe uma quantidade válida de convidados' });
   }
-  const telefone = String(dados.telefone || '').replace(/\D/g, '');
-  if (telefone.length < 10 || telefone.length > 11) {
+  if (!telefoneValido(dados.telefone)) {
     return res.status(400).json({ erro: 'Informe um telefone válido com DDD' });
   }
-  if (!dataEventoValida(dados.data)) {
+  if (!dataValida(dados.data)) {
     return res.status(400).json({ erro: 'Informe uma data válida para o evento' });
   }
-  if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(String(dados.hora || ''))) {
+  if (!horarioValido(dados.hora)) {
     return res.status(400).json({ erro: 'Informe um horário válido para o evento' });
   }
-  if (dados.valor !== '' && dados.valor != null && (!Number.isFinite(Number(dados.valor)) || Number(dados.valor) < 0)) {
+  if (dados.valor !== '' && dados.valor != null && !valorNaoNegativo(dados.valor)) {
     return res.status(400).json({ erro: 'Informe um valor estimado válido' });
   }
 

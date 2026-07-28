@@ -43,7 +43,7 @@ export default function PagamentoPix() {
   function concluir() {
     navigate('/pedido-finalizado', {
       replace: true,
-      state: { pedidoId: pagamento?.pedidoId || pedidoId, aguardandoPagamento: true },
+      state: { pedidoId: pagamento?.pedidoId || pedidoId, codigoPublico: pagamento?.codigoPublico || state?.codigoPublico, aguardandoPagamento: true },
     })
   }
 

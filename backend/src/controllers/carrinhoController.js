@@ -1,11 +1,8 @@
 const Carrinho = require("../models/Carrinho");
+const { idNumericoValido, quantidadeValida } = require('../utils/validacoes');
 
 function pegarSessaoId(req) {
   return req.headers["x-session-id"];
-}
-
-function quantidadeValida(quantidade) {
-  return Number.isInteger(Number(quantidade)) && Number(quantidade) > 0;
 }
 
 async function listarCarrinho(req, res) {
@@ -33,7 +30,7 @@ async function adicionarItem(req, res) {
       return res.status(400).json({ erro: "Sessão não informada" });
     }
 
-    if (!produto_id) {
+    if (!idNumericoValido(produto_id)) {
       return res.status(400).json({ erro: "Produto é obrigatório" });
     }
 

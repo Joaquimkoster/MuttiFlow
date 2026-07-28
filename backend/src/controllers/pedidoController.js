@@ -1,20 +1,9 @@
 const Pedido = require('../models/Pedido');
 const { gerarPixCopiaECola } = require('../utils/pix');
+const { dataValida, horarioValido, nomeValido, telefoneValido } = require('../utils/validacoes');
 
 const statusPermitidos = ['Agendado', 'Confirmado', 'Preparando', 'Pronto', 'Saiu para entrega', 'Entregue', 'Cancelado'];
-const pagamentosPermitidos = ['Pix'];
-
-function horarioEntregaValido(valor) {
-  return /^([01]\d|2[0-3]):[0-5]\d$/.test(String(valor || ''));
-}
-
-function dataEntregaValida(valor) {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(valor || ''))) return false;
-  const data = new Date(`${valor}T12:00:00`);
-  const hoje = new Date();
-  hoje.setHours(0, 0, 0, 0);
-  return !Number.isNaN(data.getTime()) && data >= hoje;
-}
+const pagamentosPermitidos = ['Pix', 'Cartão na entrega/retirada'];
 
 async function listar(req, res) {
   try {
@@ -30,22 +19,27 @@ async function listar(req, res) {
 
 async function criar(req, res) {
   const sessaoId = req.headers['x-session-id'];
+  const idempotencyKey = String(req.headers['idempotency-key'] || '').trim();
   const dados = req.body;
 
   const obrigatorios = [
     'nome',
     'whatsapp',
     'pagamento',
-    'endereco',
     'regiaoEntrega',
     'dataEntrega',
     'horario',
   ];
 
+  if (dados.regiaoEntrega !== 'retirada') obrigatorios.push('endereco', 'cidade', 'bairro');
+
   if (!sessaoId) {
     return res.status(400).json({
       erro: 'Sessão não informada',
     });
+  }
+  if (!/^[A-Za-z0-9_-]{16,100}$/.test(idempotencyKey)) {
+    return res.status(400).json({ erro: 'Chave de idempotência inválida.' });
   }
 
   const ausentes = obrigatorios.filter(
@@ -57,30 +51,56 @@ async function criar(req, res) {
       erro: `Preencha os campos: ${ausentes.join(', ')}`,
     });
   }
+  if (!nomeValido(dados.nome) || !telefoneValido(dados.whatsapp)) {
+    return res.status(400).json({ erro: 'Informe nome e WhatsApp válidos.' });
+  }
 
   if (!pagamentosPermitidos.includes(dados.pagamento)) {
     return res.status(400).json({ erro: 'Forma de pagamento inválida' });
   }
 
-  if (!['paulinia', 'outras'].includes(dados.regiaoEntrega)) {
+  if (!['retirada', 'paulinia', 'outras'].includes(dados.regiaoEntrega)) {
     return res.status(400).json({ erro: 'Região de entrega inválida' });
   }
 
-  if (!dataEntregaValida(dados.dataEntrega)) {
+  if (!dataValida(dados.dataEntrega)) {
     return res.status(400).json({ erro: 'Informe uma data de entrega válida' });
   }
-
-  if (!horarioEntregaValido(dados.horario)) {
+  if (!horarioValido(dados.horario)) {
     return res.status(400).json({ erro: 'Informe um horário válido' });
+  }
+  const entregaEm = new Date(`${dados.dataEntrega}T${dados.horario}:00`);
+  if (entregaEm.getTime() - Date.now() < 24 * 60 * 60 * 1000) {
+    return res.status(400).json({ erro: 'Faça o pedido com pelo menos 24 horas de antecedência.' });
   }
 
   try {
-    const pedido = await Pedido.criar(sessaoId, dados);
-    return res.status(201).json(pedido);
+    const pedido = await Pedido.criar(sessaoId, dados, idempotencyKey);
+    return res.status(pedido.reutilizado ? 200 : 201).json(pedido);
   } catch (error) {
     return res.status(400).json({
       erro: error.message,
     });
+  }
+}
+
+async function buscarPublico(req, res) {
+  const codigo = String(req.params.codigo || '').trim().toUpperCase();
+  if (!/^MUT-\d{4}-\d{5,}$/.test(codigo)) {
+    return res.status(400).json({ erro: 'Código de acompanhamento inválido.' });
+  }
+  try {
+    const pedido = await Pedido.buscarPublico(codigo);
+    if (!pedido) return res.status(404).json({ erro: 'Pedido não encontrado.' });
+    const tipos = {
+      retirada: 'Retirada no local',
+      paulinia: 'Entrega em Paulínia',
+      outras: 'Entrega em outra região',
+    };
+    return res.json({ ...pedido, tipo_entrega: tipos[pedido.tipo_entrega] || 'Entrega' });
+  } catch (error) {
+    console.error('Erro ao acompanhar pedido:', error);
+    return res.status(500).json({ erro: 'Não foi possível acompanhar o pedido.' });
   }
 }
 
@@ -91,12 +111,22 @@ async function atualizarStatus(req, res) {
   }
 
   try {
-    const pedido = await Pedido.atualizarStatus(req.params.id, status);
+    const pedido = await Pedido.atualizarStatus(req.params.id, status, req.usuario.id);
     if (!pedido) return res.status(404).json({ erro: 'Pedido não encontrado' });
     return res.json(pedido);
   } catch (error) {
     console.error('Erro ao atualizar pedido:', error);
     return res.status(500).json({ erro: 'Erro ao atualizar pedido' });
+  }
+}
+
+async function listarHistorico(req, res) {
+  try {
+    const historico = await Pedido.listarHistorico(req.params.id);
+    return res.json(historico);
+  } catch (error) {
+    console.error('Erro ao listar histórico do pedido:', error);
+    return res.status(500).json({ erro: 'Erro ao listar histórico do pedido' });
   }
 }
 
@@ -137,6 +167,9 @@ async function buscarPix(req, res) {
   try {
     const pedido = await Pedido.buscarPix(req.params.id, sessaoId);
     if (!pedido) return res.status(404).json({ erro: 'Pedido não encontrado' });
+    if (pedido.forma_pagamento !== 'Pix') {
+      return res.status(400).json({ erro: 'Este pedido não utiliza pagamento Pix.' });
+    }
 
     const chave = String(process.env.PIX_KEY || '').trim();
     if (!chave) {
@@ -160,6 +193,7 @@ async function buscarPix(req, res) {
       codigo,
       beneficiario,
       status: pedido.pagamento_status,
+      codigoPublico: pedido.codigo_publico,
     });
   } catch (error) {
     console.error('Erro ao gerar Pix:', error);
@@ -167,4 +201,4 @@ async function buscarPix(req, res) {
   }
 }
 
-module.exports = { criar, listar, atualizarStatus, atualizarPagamento, buscarPix, excluir };
+module.exports = { criar, listar, atualizarStatus, atualizarPagamento, buscarPix, buscarPublico, excluir, listarHistorico };

@@ -8,6 +8,7 @@ export default function Checkout() {
   const formRef = useRef(null)
   const [formError, setFormError] = useState('')
   const today = new Date()
+  today.setDate(today.getDate() + 1)
   const minimumDate = [
     today.getFullYear(),
     String(today.getMonth() + 1).padStart(2, '0'),
@@ -84,13 +85,17 @@ export default function Checkout() {
               />
             </Field>
             <Field label="Forma de pagamento">
-              <input
+              <select
                 name="pagamento"
-                value="Pix"
-                readOnly
-              />
+                value={deliveryData.pagamento}
+                onChange={handleDeliveryChange}
+                required
+              >
+                <option value="Pix">Pix</option>
+                <option value="Cartão na entrega/retirada">Cartão ao receber ou retirar</option>
+              </select>
             </Field>
-            <Field label="Endereço completo">
+            {deliveryRegion !== 'retirada' && <Field label="Endereço completo">
               <input
                 name="endereco"
                 value={deliveryData.endereco}
@@ -98,7 +103,7 @@ export default function Checkout() {
                 placeholder="Rua, número, bairro, cidade"
                 required
               />
-            </Field>
+            </Field>}
             <Field label="Complemento">
               <input
                 name="complemento"
@@ -107,7 +112,7 @@ export default function Checkout() {
                 placeholder="Apartamento, bloco ou referência"
               />
             </Field>
-            <Field label="Cidade">
+            {deliveryRegion !== 'retirada' && <Field label="Cidade">
               <input
                 name="cidade"
                 value={deliveryData.cidade}
@@ -115,8 +120,8 @@ export default function Checkout() {
                 placeholder="Sua cidade"
                 required
               />
-            </Field>
-            <Field label="Bairro">
+            </Field>}
+            {deliveryRegion !== 'retirada' && <Field label="Bairro">
               <input
                 name="bairro"
                 value={deliveryData.bairro}
@@ -124,7 +129,7 @@ export default function Checkout() {
                 placeholder="Seu bairro"
                 required
               />
-            </Field>
+            </Field>}
             <Field label="Escolha o dia da entrega">
               <input
                 name="dataEntrega"
@@ -160,7 +165,7 @@ export default function Checkout() {
           items={items}
           coupon={couponDiscount}
           delivery={deliveryRegion === 'paulinia' ? 7 : 0}
-          deliveryLabel={deliveryRegion === 'outras' ? 'Via Uber (a confirmar)' : undefined}
+          deliveryLabel={deliveryRegion === 'retirada' ? 'Retirada no local' : deliveryRegion === 'outras' ? 'Via Uber (a confirmar)' : undefined}
           cta="Revisar pedido"
           onAction={reviewOrder}
         />

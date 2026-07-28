@@ -72,11 +72,18 @@ img {
   max-width: 100%;
 }
 
+svg {
+  display: block;
+  flex-shrink: 0;
+  shape-rendering: geometricPrecision;
+}
+
 h1,
 h2,
 h3,
 p {
   margin: 0;
+  overflow-wrap: break-word;
 }
 
 button {

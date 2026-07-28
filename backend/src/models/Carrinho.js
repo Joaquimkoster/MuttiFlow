@@ -34,8 +34,8 @@ async function buscarCarrinho(sessaoId) {
       COALESCE(p.imagens->>0, '') AS image,
       p.porcao AS serves,
       ci.quantidade,
-      ci.preco_unitario AS price,
-      (ci.quantidade * ci.preco_unitario) AS subtotal
+      p.preco AS price,
+      (ci.quantidade * p.preco) AS subtotal
     FROM carrinho_itens ci
     JOIN produtos p ON p.id = ci.produto_id
     WHERE ci.carrinho_id = $1

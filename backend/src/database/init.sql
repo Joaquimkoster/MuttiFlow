@@ -6,6 +6,19 @@ CREATE TABLE IF NOT EXISTS categorias (
   slug VARCHAR(100) NOT NULL UNIQUE
 );
 
+CREATE TABLE IF NOT EXISTS cupons (
+  id SERIAL PRIMARY KEY,
+  codigo VARCHAR(50) NOT NULL UNIQUE,
+  tipo VARCHAR(20) NOT NULL CHECK (tipo IN ('fixo', 'percentual')),
+  valor NUMERIC(10,2) NOT NULL CHECK (valor > 0),
+  ativo BOOLEAN NOT NULL DEFAULT TRUE,
+  inicio_em TIMESTAMP,
+  fim_em TIMESTAMP,
+  criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  atualizado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CHECK (fim_em IS NULL OR inicio_em IS NULL OR fim_em >= inicio_em)
+);
+
 CREATE TABLE IF NOT EXISTS produtos (
   id SERIAL PRIMARY KEY,
   nome VARCHAR(255) NOT NULL,
@@ -33,8 +46,23 @@ CREATE TABLE IF NOT EXISTS usuarios (
   nome VARCHAR(100) NOT NULL,
   email VARCHAR(255) UNIQUE NOT NULL,
   senha VARCHAR(255) NOT NULL,
+  funcao VARCHAR(20) NOT NULL DEFAULT 'operador' CHECK (funcao IN ('admin', 'operador')),
   criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS funcao VARCHAR(20) NOT NULL DEFAULT 'operador';
+UPDATE usuarios SET funcao = 'admin' WHERE funcao IS NULL OR funcao NOT IN ('admin', 'operador');
+UPDATE usuarios SET funcao = 'admin'
+WHERE id = (SELECT MIN(id) FROM usuarios)
+  AND NOT EXISTS (SELECT 1 FROM usuarios WHERE funcao = 'admin');
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'usuarios_funcao_valida') THEN
+    ALTER TABLE usuarios ADD CONSTRAINT usuarios_funcao_valida
+      CHECK (funcao IN ('admin', 'operador')) NOT VALID;
+  END IF;
+END $$;
 
 CREATE TABLE IF NOT EXISTS carrinhos (
   id SERIAL PRIMARY KEY,
@@ -62,6 +90,9 @@ CREATE TABLE IF NOT EXISTS pedidos (
   email VARCHAR(255),
   forma_pagamento VARCHAR(80) NOT NULL DEFAULT 'Pix',
   pagamento_status VARCHAR(20) NOT NULL DEFAULT 'Pendente',
+  codigo_publico VARCHAR(30) UNIQUE,
+  idempotency_key VARCHAR(100),
+  tipo_entrega VARCHAR(20),
   endereco TEXT NOT NULL,
   complemento TEXT,
   cidade VARCHAR(100),
@@ -81,18 +112,34 @@ ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS pagamento_status VARCHAR(20) NOT NU
 ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS cidade VARCHAR(100);
 ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS bairro VARCHAR(100);
 ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS atualizado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;
-ALTER TABLE pedidos ALTER COLUMN forma_pagamento SET DEFAULT 'Pix';
-UPDATE pedidos SET forma_pagamento = 'Pix' WHERE forma_pagamento <> 'Pix';
-
+ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS codigo_publico VARCHAR(30);
+ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS idempotency_key VARCHAR(100);
+ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS tipo_entrega VARCHAR(20);
+UPDATE pedidos
+SET codigo_publico = 'MUT-' || EXTRACT(YEAR FROM criado_em)::int || '-' || LPAD(id::text, 5, '0')
+WHERE codigo_publico IS NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS idx_pedidos_codigo_publico ON pedidos (codigo_publico);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_pedidos_idempotencia
+  ON pedidos (sessao_id, idempotency_key) WHERE idempotency_key IS NOT NULL;
 DO $$
 BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_constraint WHERE conname = 'pedidos_forma_pagamento_pix'
-  ) THEN
-    ALTER TABLE pedidos
-      ADD CONSTRAINT pedidos_forma_pagamento_pix CHECK (forma_pagamento = 'Pix');
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'pedidos_desconto_nao_negativo') THEN
+    ALTER TABLE pedidos ADD CONSTRAINT pedidos_desconto_nao_negativo CHECK (desconto >= 0) NOT VALID;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'pedidos_frete_nao_negativo') THEN
+    ALTER TABLE pedidos ADD CONSTRAINT pedidos_frete_nao_negativo CHECK (frete >= 0) NOT VALID;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'pedidos_status_valido') THEN
+    ALTER TABLE pedidos ADD CONSTRAINT pedidos_status_valido
+      CHECK (status IN ('Agendado', 'Confirmado', 'Preparando', 'Pronto', 'Saiu para entrega', 'Entregue', 'Cancelado')) NOT VALID;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'pedidos_pagamento_status_valido') THEN
+    ALTER TABLE pedidos ADD CONSTRAINT pedidos_pagamento_status_valido
+      CHECK (pagamento_status IN ('Pendente', 'Pago')) NOT VALID;
   END IF;
 END $$;
+ALTER TABLE pedidos ALTER COLUMN forma_pagamento SET DEFAULT 'Pix';
+ALTER TABLE pedidos DROP CONSTRAINT IF EXISTS pedidos_forma_pagamento_pix;
 
 CREATE TABLE IF NOT EXISTS pedido_itens (
   id SERIAL PRIMARY KEY,
@@ -102,6 +149,41 @@ CREATE TABLE IF NOT EXISTS pedido_itens (
   quantidade INTEGER NOT NULL CHECK (quantidade > 0),
   preco_unitario NUMERIC(10,2) NOT NULL CHECK (preco_unitario >= 0)
 );
+
+CREATE TABLE IF NOT EXISTS pedido_status_historico (
+  id SERIAL PRIMARY KEY,
+  pedido_id INTEGER NOT NULL REFERENCES pedidos(id) ON DELETE CASCADE,
+  status_anterior VARCHAR(50),
+  status_novo VARCHAR(50) NOT NULL,
+  usuario_id INTEGER REFERENCES usuarios(id) ON DELETE SET NULL,
+  criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_pedido_status_historico_pedido
+  ON pedido_status_historico (pedido_id, criado_em DESC);
+
+INSERT INTO pedido_status_historico (pedido_id, status_anterior, status_novo)
+SELECT p.id, NULL, p.status
+FROM pedidos p
+WHERE NOT EXISTS (
+  SELECT 1 FROM pedido_status_historico h WHERE h.pedido_id = p.id
+);
+
+CREATE TABLE IF NOT EXISTS pagamentos (
+  id SERIAL PRIMARY KEY,
+  pedido_id INTEGER NOT NULL UNIQUE REFERENCES pedidos(id) ON DELETE CASCADE,
+  forma VARCHAR(80) NOT NULL,
+  status VARCHAR(20) NOT NULL DEFAULT 'Pendente',
+  valor NUMERIC(10,2) NOT NULL CHECK (valor >= 0),
+  referencia_externa VARCHAR(255),
+  criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  atualizado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO pagamentos (pedido_id, forma, status, valor)
+SELECT id, forma_pagamento, pagamento_status, total
+FROM pedidos
+ON CONFLICT (pedido_id) DO NOTHING;
 
 CREATE TABLE IF NOT EXISTS eventos (
   id SERIAL PRIMARY KEY,
@@ -121,8 +203,11 @@ CREATE TABLE IF NOT EXISTS eventos (
 ALTER TABLE eventos ADD COLUMN IF NOT EXISTS telefone VARCHAR(30);
 
 CREATE INDEX IF NOT EXISTS idx_pedidos_criado_em ON pedidos (criado_em DESC);
+CREATE INDEX IF NOT EXISTS idx_pedidos_status ON pedidos (status);
+CREATE INDEX IF NOT EXISTS idx_pedidos_cliente_nome ON pedidos (cliente_nome);
 CREATE INDEX IF NOT EXISTS idx_pedidos_data_entrega ON pedidos (data_entrega);
 CREATE INDEX IF NOT EXISTS idx_eventos_data ON eventos (data);
+CREATE INDEX IF NOT EXISTS idx_produtos_status ON produtos (status);
 
 UPDATE eventos SET status = 'Aceito' WHERE status IN ('Agendado', 'Confirmado');
 
@@ -132,6 +217,10 @@ INSERT INTO categorias (nome, slug) VALUES
   ('Quinta', 'quinta'),
   ('Sexta', 'sexta')
 ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO cupons (codigo, tipo, valor, ativo)
+VALUES ('MUTTI15', 'fixo', 10.00, TRUE)
+ON CONFLICT (codigo) DO NOTHING;
 
 INSERT INTO produtos (id, nome, slug, categoria_id, descricao, preco, preco_antigo, imagens, ingredientes, peso, porcao, badge, featured, estoque, ordenacao, status)
 VALUES
@@ -165,7 +254,6 @@ ON CONFLICT (id) DO UPDATE SET
   porcao = EXCLUDED.porcao,
   badge = EXCLUDED.badge,
   featured = EXCLUDED.featured,
-  estoque = EXCLUDED.estoque,
   ordenacao = EXCLUDED.ordenacao,
   status = EXCLUDED.status,
   updated_at = CURRENT_TIMESTAMP;

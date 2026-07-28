@@ -94,14 +94,15 @@ export function CartProvider({ children }) {
     await loadCart()
   }
 
-  async function submitOrder() {
+  async function submitOrder(idempotencyKey) {
   try {
     setError('');
 
     const order = await createOrder(
       deliveryData,
       couponCode,
-      deliveryRegion
+      deliveryRegion,
+      idempotencyKey
     );
 
     setCart(null);

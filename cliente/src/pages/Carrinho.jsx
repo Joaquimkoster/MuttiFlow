@@ -135,9 +135,19 @@ export default function Carrinho() {
         </div>
 
         <div className="surface delivery-card">
-          <h2>Região de entrega</h2>
-          <p>Selecione onde o pedido será entregue:</p>
+          <h2>Entrega ou retirada</h2>
+          <p>Selecione como deseja receber o pedido:</p>
           <div className="delivery-options">
+            <label className={deliveryRegion === 'retirada' ? 'delivery-option selected' : 'delivery-option'}>
+              <input
+                type="radio"
+                name="deliveryRegion"
+                value="retirada"
+                checked={deliveryRegion === 'retirada'}
+                onChange={(event) => setDeliveryRegion(event.target.value)}
+              />
+              <span><strong>Retirar no local</strong><small>Sem taxa de entrega; combine a retirada pelo WhatsApp</small></span>
+            </label>
             <label className={deliveryRegion === 'paulinia' ? 'delivery-option selected' : 'delivery-option'}>
               <input
                 type="radio"
@@ -160,12 +170,24 @@ export default function Carrinho() {
             </label>
           </div>
         </div>
+        <div className="surface order-rules-card">
+          <h2>Antes de finalizar</h2>
+          <ul>
+            <li><strong>Dias disponíveis:</strong> terça a sexta, conforme o dia indicado em cada produto.</li>
+            <li><strong>Prazo mínimo:</strong> faça o pedido com pelo menos 24 horas de antecedência.</li>
+            <li><strong>Entrega:</strong> Paulínia por R$ 7,00; outras regiões via Uber com valor confirmado pelo WhatsApp; retirada sem taxa.</li>
+            <li><strong>Pagamento:</strong> Pix antecipado ou cartão no recebimento/retirada.</li>
+            <li><strong>Cancelamento:</strong> solicite pelo WhatsApp com no mínimo 24 horas de antecedência.</li>
+            <li><strong>Alergênicos:</strong> os produtos podem conter glúten, leite, ovos, castanhas e outros alergênicos. Consulte a loja em caso de restrição.</li>
+            <li><strong>Disponibilidade:</strong> produtos inativos ou sem estoque não serão confirmados pelo sistema.</li>
+          </ul>
+        </div>
         </div>
         <OrderSummary
           items={items}
           coupon={couponDiscount}
           delivery={deliveryRegion === 'paulinia' ? 7 : 0}
-          deliveryLabel={deliveryRegion === 'outras' ? 'Via Uber (a confirmar)' : deliveryRegion ? undefined : 'Selecione a região'}
+          deliveryLabel={deliveryRegion === 'retirada' ? 'Retirada no local' : deliveryRegion === 'outras' ? 'Via Uber (a confirmar)' : deliveryRegion ? undefined : 'Selecione entrega ou retirada'}
           disabled={!deliveryRegion || items.length === 0}
         />
       </div>

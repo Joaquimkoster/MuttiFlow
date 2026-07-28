@@ -79,12 +79,12 @@ export function clearCart() {
   })
 }
 
-export function createOrder(deliveryData, couponCode, deliveryRegion) {
+export function createOrder(deliveryData, couponCode, deliveryRegion, idempotencyKey) {
   return request('/pedidos', {
     method: 'POST',
+    headers: { 'Idempotency-Key': idempotencyKey },
     body: JSON.stringify({
       ...deliveryData,
-      pagamento: 'Pix',
       cupom: couponCode.trim().toUpperCase(),
       regiaoEntrega: deliveryRegion,
     }),
@@ -93,4 +93,8 @@ export function createOrder(deliveryData, couponCode, deliveryRegion) {
 
 export function getPixPayment(pedidoId) {
   return request(`/pedidos/${pedidoId}/pix`)
+}
+
+export function getPublicOrder(codigo) {
+  return request(`/pedidos/publico/${encodeURIComponent(codigo)}`)
 }
