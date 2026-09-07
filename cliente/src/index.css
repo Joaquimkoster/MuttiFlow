@@ -1,24 +1,24 @@
 :root {
-  --nav: #0f172a;
-  --primary: #2563eb;
-  --primary-hover: #1d4ed8;
-  --primary-dark: #1d4ed8;
-  --primary-soft: #dbeafe;
-  --accent: #2563eb;
-  --bg: #f8fafc;
+  --nav: #29402f;
+  --primary: #628a62;
+  --primary-hover: #4d704f;
+  --primary-dark: #3f6248;
+  --primary-soft: #e3eee3;
+  --accent: #96b196;
+  --bg: #ffffff;
   --card: #ffffff;
-  --text: #1e293b;
-  --muted: #64748b;
-  --line: #e2e8f0;
-  --soft: #f1f5f9;
+  --text: #29382d;
+  --muted: #667368;
+  --line: #dfe6df;
+  --soft: #f7faf7;
   --price: #dc2626;
   --success: #16a34a;
-  --warning: #2563eb;
+  --warning: #628a62;
   --error: #dc2626;
   --radius: 20px;
   --radius-sm: 13px;
-  --shadow: 0 22px 55px rgba(15, 23, 42, 0.12);
-  --shadow-sm: 0 9px 28px rgba(15, 23, 42, 0.07);
+  --shadow: 0 22px 55px rgba(41, 64, 47, 0.12);
+  --shadow-sm: 0 9px 28px rgba(41, 64, 47, 0.07);
   --container: 1200px;
   --font-display: Georgia, 'Times New Roman', serif;
   color: var(--text);
@@ -93,7 +93,7 @@ button {
 
 button:focus-visible,
 a:focus-visible {
-  outline: 3px solid rgba(37, 99, 235, .24);
+  outline: 3px solid rgba(98, 138, 98, .24);
   outline-offset: 3px;
 }
 
@@ -104,6 +104,6 @@ textarea:focus-visible {
 }
 
 ::selection {
-  background: #dbeafe;
+  background: #e3eee3;
   color: var(--nav);
 }

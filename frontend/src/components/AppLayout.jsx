@@ -1,4 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
+import logoDieMutti from "../assets/die-mutti-logo.png";
 
 const menuItems = [
   { label: "Dashboard", path: "/dashboard", icon: "dashboard" },
@@ -45,8 +46,8 @@ export default function AppLayout({ title, action, children }) {
     <div className="app-shell">
       <aside className="app-sidebar">
         <div className="app-brand">
-          <span className="brand-mark">M</span>
-          <div><h2 className="app-logo">Diê Mutti</h2><span>Gestão da cozinha</span></div>
+          <img className="brand-logo" src={logoDieMutti} alt="Die Mutti — Cozinha Artesanal" />
+          <div><h2 className="app-logo">Die Mutti</h2><span>Gestão da cozinha</span></div>
         </div>
 
         <span className="nav-section-label">Menu principal</span>
@@ -68,7 +69,7 @@ export default function AppLayout({ title, action, children }) {
 
         <div className="sidebar-account">
           <span className="account-avatar">{iniciais}</span>
-          <span className="account-copy"><strong>{nomeUsuario}</strong><small>{usuario.email || "Equipe Diê Mutti"}</small></span>
+          <span className="account-copy"><strong>{nomeUsuario}</strong><small>{usuario.email || "Equipe Die Mutti"}</small></span>
           <button type="button" onClick={handleLogout} className="logout-button" title="Sair" aria-label="Sair">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3M15 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/></svg>
           </button>

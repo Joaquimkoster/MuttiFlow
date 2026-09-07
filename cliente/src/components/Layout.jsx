@@ -6,6 +6,7 @@ import {
   FiX,
 } from 'react-icons/fi'
 import { useCart } from '../hooks/useCart'
+import logoDieMutti from '../assets/die-mutti-logo.png'
 
 const navItems = [
   { label: 'Cardápio', path: '/cardapio' },
@@ -23,11 +24,7 @@ export function Layout({ children }) {
       <header className="site-header">
         <div className="container nav-shell">
           <Link className="brand" to="/cardapio" onClick={() => setIsOpen(false)}>
-            <span className="brand-mark">M</span>
-            <span>
-              <strong>Die Mutti</strong>
-              <small>Cozinha artesanal</small>
-            </span>
+            <img className="brand-logo" src={logoDieMutti} alt="Die Mutti — Cozinha Artesanal" />
           </Link>
 
           <nav className="desktop-nav" aria-label="Menu principal">
