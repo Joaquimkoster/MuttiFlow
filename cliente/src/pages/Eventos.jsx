@@ -2,11 +2,6 @@ import { useState } from 'react'
 import { FiCalendar, FiCheckCircle, FiMessageCircle } from 'react-icons/fi'
 import { SectionHeader } from '../components/ui'
 import { createEvent } from '../services/eventApi'
-import aniversarioImg from '../assets/eventos/aniversario.png'
-import casamentoImg from '../assets/eventos/casamento.png'
-import chaDeBebeImg from '../assets/eventos/cha-de-bebe.png'
-import confraternizacaoImg from '../assets/eventos/confraternizacao.png'
-import corporativoImg from '../assets/eventos/corporativo.png'
 
 const tipos = [
   'Aniversário',
@@ -15,14 +10,6 @@ const tipos = [
   'Corporativo',
   'Chá de bebê',
   'Outro',
-]
-
-const fotosEventos = [
-  { src: aniversarioImg, titulo: 'Celebrações ao ar livre', tipo: 'Aniversários' },
-  { src: casamentoImg, titulo: 'Mesas feitas para encantar', tipo: 'Casamentos' },
-  { src: corporativoImg, titulo: 'Encontros com sabor', tipo: 'Corporativo' },
-  { src: chaDeBebeImg, titulo: 'Detalhes cheios de carinho', tipo: 'Chá de bebê' },
-  { src: confraternizacaoImg, titulo: 'Momentos para compartilhar', tipo: 'Confraternizações' },
 ]
 
 function parseCurrency(value) {
@@ -97,22 +84,6 @@ export default function Eventos() {
         title="Leve a MuttiFlow para seu evento"
         text="Conte um pouco sobre a ocasião. Nossa equipe prepara uma proposta personalizada e entra em contato para confirmar os detalhes."
       />
-
-      <div className="event-gallery" aria-label="Galeria de eventos realizados">
-        {fotosEventos.map((foto, index) => (
-          <figure className={`event-gallery-card event-gallery-card-${index + 1}`} key={foto.tipo}>
-            <img
-              src={foto.src}
-              alt={`${foto.tipo}: ${foto.titulo.toLowerCase()}`}
-              loading={index === 0 ? 'eager' : 'lazy'}
-            />
-            <figcaption>
-              <span>{foto.tipo}</span>
-              <strong>{foto.titulo}</strong>
-            </figcaption>
-          </figure>
-        ))}
-      </div>
 
       <div className="event-page">
         <form

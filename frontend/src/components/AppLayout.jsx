@@ -78,7 +78,7 @@ export default function AppLayout({ title, action, children }) {
 
       <main className="app-main">
         <header className="page-header">
-          <div><span className="page-eyebrow">Painel <b>/</b> {title}</span><h1>{title}</h1><p>{pageDescriptions[title]}</p></div>
+          <div><h1>{title}</h1><p>{pageDescriptions[title]}</p></div>
           {action}
         </header>
 

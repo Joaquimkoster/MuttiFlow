@@ -1,4 +1,10 @@
 import { SectionHeader } from '../components/ui'
+import { FiArrowUpRight, FiGlobe, FiInstagram } from 'react-icons/fi'
+import joaquimFoto from '../assets/joaquim-koster.jpeg'
+import josianeFoto from '../assets/josiane-koster.jpeg'
+import historiaReceitas from '../assets/historia-9301.jpg'
+import historiaPaes from '../assets/historia-4877.jpg'
+import historiaMassas from '../assets/historia-2746.jpg'
 
 export default function Sobre() {
   return (
@@ -15,9 +21,9 @@ export default function Sobre() {
           </p>
         </div>
         <div className="photo-mosaic">
-          <img src="https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=800&q=80" alt="Equipe preparando massas" />
-          <img src="https://images.unsplash.com/photo-1556911220-bff31c812dba?auto=format&fit=crop&w=800&q=80" alt="Cozinha organizada" />
-          <img src="https://images.unsplash.com/photo-1528712306091-ed0763094c98?auto=format&fit=crop&w=800&q=80" alt="Mesa posta" />
+          <img src={historiaReceitas} alt="Conferência de receitas na cozinha da Diê Mutti" />
+          <img src={historiaPaes} alt="Preparo de pães artesanais antes de assar" />
+          <img src={historiaMassas} alt="Corte artesanal de massa com sementes na bancada" />
         </div>
       </section>
 
@@ -28,17 +34,48 @@ export default function Sobre() {
             {[
               {
                 name: 'Josiane Köster',
+                photo: josianeFoto,
+                cropScreenshot: true,
                 role: 'Chefe de cozinha, responsável pelas receitas e pela produção artesanal.',
               },
               {
-                name: 'Joaquim Köster',
-                role: 'Técnico de TI e desenvolvedor dos dois sistemas da Diê Mutti.',
+                name: 'Koster-Tech',
+                photo: joaquimFoto,
+                role: 'Desenvolvimento de software, inteligência artificial, dados e gêmeos digitais.',
+                links: [
+                  { label: 'Projetos e contato', href: 'https://www.koster-tech.com/', icon: FiGlobe },
+                  { label: '@koster.tech', href: 'https://www.instagram.com/koster.tech/', icon: FiInstagram },
+                ],
               },
             ].map((member) => (
               <article className="team-card" key={member.name}>
-                <span className="avatar large">{member.name.charAt(0)}</span>
+                {member.cropScreenshot ? (
+                  <span
+                    className="avatar large team-avatar-cropped"
+                    role="img"
+                    aria-label={member.name}
+                    style={{ backgroundImage: `url(${member.photo})` }}
+                  />
+                ) : member.photo ? (
+                  <span className="avatar large team-avatar">
+                    <img src={member.photo} alt={member.name} />
+                  </span>
+                ) : (
+                  <span className="avatar large">{member.name.charAt(0)}</span>
+                )}
                 <h3>{member.name}</h3>
-                <p>{member.role}</p>
+                {member.role && <p>{member.role}</p>}
+                {member.links && (
+                  <div className="team-links">
+                    {member.links.map((link) => (
+                      <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer">
+                        <link.icon aria-hidden="true" />
+                        <span>{link.label}</span>
+                        <FiArrowUpRight aria-hidden="true" />
+                      </a>
+                    ))}
+                  </div>
+                )}
               </article>
             ))}
           </div>
